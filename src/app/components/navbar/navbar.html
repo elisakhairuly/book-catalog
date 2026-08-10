@@ -1,0 +1,42 @@
+<header class="navbar">
+
+  <div class="navbar-inner">
+
+    <a
+      class="brand"
+      routerLink="/home"
+    >
+
+      <span class="brand-mark">
+        B
+      </span>
+
+      <span class="brand-name">
+        Book Catalog
+      </span>
+
+    </a>
+
+
+    <nav class="nav-links">
+
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Home
+      </a>
+
+      <a
+        routerLink="/book"
+        routerLinkActive="active"
+      >
+        Books
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>

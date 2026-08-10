@@ -1,0 +1,47 @@
+<a
+  class="book-card"
+  [routerLink]="['/book', book.id]"
+  [appHighRating]="book.rating"
+>
+
+  <div class="book-image">
+
+    <img
+      [src]="book.thumbnail"
+      [alt]="book.title"
+    >
+
+  </div>
+
+
+  <div class="book-info">
+
+    <span class="category">
+      {{ book.category }}
+    </span>
+
+    <h3>
+      {{ book.title }}
+    </h3>
+
+    <div class="book-bottom">
+
+      <span class="rating">
+        <span class="star">★</span>
+        {{ book.rating }}
+      </span>
+
+      <span class="price">
+        ${{ book.price }}
+      </span>
+
+    </div>
+
+    <div class="view-details">
+      View details
+      <span>→</span>
+    </div>
+
+  </div>
+
+</a>

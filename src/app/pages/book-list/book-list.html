@@ -1,0 +1,311 @@
+<div class="page">
+
+  <div class="content">
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <span class="hero-label">
+          EXPLORE COLLECTION
+        </span>
+
+        <h2>
+          Find Your Next<br>
+          Favorite Book
+        </h2>
+
+        <p>
+          Temukan berbagai koleksi dan informasi menarik
+          dalam katalog kami.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         BOOK SECTION
+    ========================== -->
+
+    <section class="books-section">
+
+      <!-- SECTION HEADER -->
+
+      <div class="section-header">
+
+        <div>
+
+          <span class="section-label">
+            CATALOG
+          </span>
+
+          <h2>
+            Daftar Buku
+          </h2>
+
+        </div>
+
+
+        @if (!isLoading && !errorMessage && totalItems > 0) {
+
+          <span class="book-count">
+            Showing {{ startItem }}–{{ endItem }}
+            of {{ totalItems }} books
+          </span>
+
+        }
+
+      </div>
+
+
+      <!-- =========================
+           LOADING
+      ========================== -->
+
+      @if (isLoading) {
+
+        <div class="loading-state">
+
+          <div class="loading-spinner"></div>
+
+          <h3>
+            Memuat koleksi...
+          </h3>
+
+          <p>
+            Sedang mengambil data buku.
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- =========================
+           ERROR
+      ========================== -->
+
+      @else if (errorMessage) {
+
+        <div class="error-state">
+
+          <div class="error-icon">
+            !
+          </div>
+
+          <h3>
+            Oops, terjadi kesalahan
+          </h3>
+
+          <p>
+            {{ errorMessage }}
+          </p>
+
+          <button
+            class="reset-button"
+            type="button"
+            (click)="ngOnInit()"
+          >
+            Coba Lagi
+          </button>
+
+        </div>
+
+      }
+
+
+      <!-- =========================
+           CONTENT
+      ========================== -->
+
+      @else {
+
+        <!-- FILTER BAR -->
+
+        <div class="filter-bar">
+
+          <!-- SEARCH -->
+
+          <div class="search-box">
+
+            <span class="search-icon">
+              ⌕
+            </span>
+
+            <input
+              type="text"
+              placeholder="Cari buku..."
+              [value]="searchKeyword"
+              (input)="searchBooks($event)"
+            >
+
+          </div>
+
+
+          <!-- CATEGORY -->
+
+          <div class="filter-box">
+
+            <select
+              [value]="selectedCategory"
+              (change)="filterByCategory($event)"
+            >
+
+              <option value="">
+                Semua Kategori
+              </option>
+
+              @for (
+                category of categories;
+                track category
+              ) {
+
+                <option [value]="category">
+                  {{ category }}
+                </option>
+
+              }
+
+            </select>
+
+          </div>
+
+
+          <!-- RESET -->
+
+          <button
+            class="reset-button"
+            type="button"
+            (click)="resetFilters()"
+          >
+            Reset
+          </button>
+
+        </div>
+
+
+        <!-- =========================
+             BOOK LIST
+        ========================== -->
+
+        @if (books.length > 0) {
+
+          <div class="books-container">
+
+            @for (
+              book of books;
+              track book.id
+            ) {
+
+              <app-book-card
+                [book]="book"
+              ></app-book-card>
+
+            }
+
+          </div>
+
+
+          <!-- =========================
+               PAGINATION
+          ========================== -->
+
+          @if (totalPages > 1) {
+
+            <div class="pagination">
+
+              <!-- PREVIOUS -->
+
+              <button
+                type="button"
+                class="page-button arrow"
+                [disabled]="currentPage === 1"
+                (click)="changePage(currentPage - 1)"
+              >
+                ←
+              </button>
+
+
+              <!-- PAGE NUMBERS -->
+
+              @for (
+                page of pageNumbers;
+                track page
+              ) {
+
+                <button
+                  type="button"
+                  class="page-button"
+                  [class.active]="currentPage === page"
+                  (click)="changePage(page)"
+                >
+                  {{ page }}
+                </button>
+
+              }
+
+
+              <!-- NEXT -->
+
+              <button
+                type="button"
+                class="page-button arrow"
+                [disabled]="currentPage === totalPages"
+                (click)="changePage(currentPage + 1)"
+              >
+                →
+              </button>
+
+            </div>
+
+          }
+
+        }
+
+
+        <!-- =========================
+             EMPTY STATE
+        ========================== -->
+
+        @else {
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+              ⌕
+            </div>
+
+            <h3>
+              Buku tidak ditemukan
+            </h3>
+
+            <p>
+              Coba gunakan kata kunci atau kategori
+              yang berbeda.
+            </p>
+
+            <button
+              class="reset-button"
+              type="button"
+              (click)="resetFilters()"
+            >
+              Tampilkan Semua Buku
+            </button>
+
+          </div>
+
+        }
+
+      }
+
+    </section>
+
+  </div>
+
+</div>

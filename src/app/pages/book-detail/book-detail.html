@@ -1,0 +1,219 @@
+<div class="detail-page">
+
+  @if (isLoading) {
+
+    <!-- =========================
+         LOADING
+    ========================== -->
+
+    <div class="loading-state">
+
+      <div class="loading-spinner"></div>
+
+      <h3>
+        Memuat detail buku...
+      </h3>
+
+      <p>
+        Sedang mengambil informasi buku.
+      </p>
+
+    </div>
+
+  }
+
+  @else if (errorMessage) {
+
+    <!-- =========================
+         ERROR
+    ========================== -->
+
+    <div class="error-state">
+
+      <div class="error-icon">
+        !
+      </div>
+
+      <span class="error-label">
+        BOOK NOT FOUND
+      </span>
+
+      <h3>
+        Buku tidak ditemukan
+      </h3>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <a
+        class="back-button"
+        routerLink="/book"
+      >
+        ← Kembali ke Katalog
+      </a>
+
+    </div>
+
+  }
+
+  @else if (book) {
+
+    <!-- =========================
+         BACK TO CATALOG
+    ========================== -->
+
+    <a
+      class="back-link"
+      routerLink="/book"
+    >
+      <span>←</span>
+      Kembali ke Katalog
+    </a>
+
+
+    <!-- =========================
+         DETAIL LAYOUT
+    ========================== -->
+
+    <main class="detail-layout">
+
+
+      <!-- =========================
+           PRODUCT IMAGE
+      ========================== -->
+
+      <section class="product-image">
+
+        <div class="image-wrapper">
+
+          <img
+            [src]="book.thumbnail"
+            [alt]="book.title"
+          >
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           PRODUCT INFORMATION
+      ========================== -->
+
+      <section class="product-info">
+
+        <!-- CATEGORY -->
+
+        <span class="category">
+          {{ book.category }}
+        </span>
+
+
+        <!-- TITLE -->
+
+        <h1>
+          {{ book.title }}
+        </h1>
+
+
+        <!-- RATING -->
+
+        <div class="rating">
+
+          <span>★</span>
+
+          {{ book.rating }}
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+
+        <p class="description">
+          {{ book.description }}
+        </p>
+
+
+        <!-- =========================
+             PRODUCT META
+        ========================== -->
+
+        <div class="product-meta">
+
+          <div class="meta-item">
+
+            <span class="meta-label">
+              Brand
+            </span>
+
+            <strong>
+              {{ book.brand || '—' }}
+            </strong>
+
+          </div>
+
+
+          <div class="meta-item">
+
+            <span class="meta-label">
+              Stock
+            </span>
+
+            <strong>
+              {{ book.stock }}
+            </strong>
+
+          </div>
+
+
+          <div class="meta-item">
+
+            <span class="meta-label">
+              Discount
+            </span>
+
+            <strong>
+              {{ book.discountPercentage }}%
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================
+             PRICE & ACTION
+        ========================== -->
+
+        <div class="purchase-row">
+
+          <div>
+
+            <span class="price-label">
+              Price
+            </span>
+
+            <div class="price">
+              ${{ book.price }}
+            </div>
+
+          </div>
+
+
+          <button
+            class="primary-button"
+            type="button"
+          >
+            Add to Collection
+          </button>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  }
+
+</div>

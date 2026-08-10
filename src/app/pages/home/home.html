@@ -1,0 +1,135 @@
+<div class="home-page">
+
+  <!-- HERO -->
+
+  <section class="home-hero">
+
+    <div class="hero-copy">
+
+      <span class="eyebrow">
+        BOOK CATALOG
+      </span>
+
+      <h1>
+        Your next<br>
+        <em>great read.</em>
+      </h1>
+
+      <p>
+        Explore our collection, discover new titles,
+        and find a book worth your time.
+      </p>
+
+      <a
+        class="hero-button"
+        routerLink="/book"
+      >
+        Explore Collection
+        <span>→</span>
+      </a>
+
+    </div>
+
+    @if (featuredBooks.length > 0) {
+
+      <div class="featured-book">
+
+        <div class="featured-label">
+          FEATURED
+        </div>
+
+        <img
+          [src]="featuredBooks[0].thumbnail"
+          [alt]="featuredBooks[0].title"
+        >
+
+        <div class="featured-info">
+
+          <span>
+            {{ featuredBooks[0].category }}
+          </span>
+
+          <h3>
+            {{ featuredBooks[0].title }}
+          </h3>
+
+          <p>
+            ⭐ {{ featuredBooks[0].rating }}
+          </p>
+
+        </div>
+
+      </div>
+
+    }
+
+  </section>
+
+
+  <!-- FEATURED COLLECTION -->
+
+  <section class="collection-section">
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          DISCOVER
+        </span>
+
+        <h2>
+          Featured Collection
+        </h2>
+
+      </div>
+
+      <a
+        routerLink="/book"
+        class="view-all"
+      >
+        View all
+        <span>→</span>
+      </a>
+
+    </div>
+
+
+    <div class="featured-grid">
+
+      @for (book of featuredBooks; track book.id) {
+
+        <app-book-card
+          [book]="book"
+        ></app-book-card>
+
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- STATEMENT -->
+
+  <section class="statement">
+
+    <span class="eyebrow">
+      FIND SOMETHING NEW
+    </span>
+
+    <h2>
+      There's always another<br>
+      story waiting for you.
+    </h2>
+
+    <a
+      routerLink="/book"
+      class="statement-link"
+    >
+      Browse all books →
+    </a>
+
+  </section>
+
+</div>

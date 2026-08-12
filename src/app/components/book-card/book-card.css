@@ -1,8 +1,8 @@
 /* =========================
-   BOOK CARD
+   PRODUCT CARD
 ========================= */
 
-.book-card {
+.product-card {
   position: relative;
 
   display: flex;
@@ -33,7 +33,7 @@
    HOVER
 ========================= */
 
-.book-card:hover {
+.product-card:hover {
   transform: translateY(-5px);
 
   border-color: #deddec;
@@ -47,7 +47,7 @@
    IMAGE
 ========================= */
 
-.book-image {
+.product-image {
   height: 230px;
 
   display: flex;
@@ -63,7 +63,7 @@
   overflow: hidden;
 }
 
-.book-image img {
+.product-image img {
   width: 100%;
   height: 100%;
 
@@ -72,7 +72,7 @@
   transition: transform 0.3s ease;
 }
 
-.book-card:hover .book-image img {
+.product-card:hover .product-image img {
   transform: scale(1.04);
 }
 
@@ -81,7 +81,7 @@
    INFO
 ========================= */
 
-.book-info {
+.product-info {
   display: flex;
   flex-direction: column;
 
@@ -117,7 +117,7 @@
    TITLE
 ========================= */
 
-.book-info h3 {
+.product-info h3 {
   display: -webkit-box;
 
   margin: 0 0 14px;
@@ -140,7 +140,7 @@
    BOTTOM INFO
 ========================= */
 
-.book-bottom {
+.product-bottom {
   display: flex;
 
   align-items: center;
@@ -184,7 +184,7 @@
 
 
 /* =========================
-   VIEW DETAILS
+   VIEW PRODUCT
 ========================= */
 
 .view-details {
@@ -214,11 +214,11 @@
   transition: transform 0.2s ease;
 }
 
-.book-card:hover .view-details {
+.product-card:hover .view-details {
   color: #6c63ff;
 }
 
-.book-card:hover .view-details span {
+.product-card:hover .view-details span {
   transform: translateX(3px);
 }
 
@@ -229,11 +229,11 @@
 
 @media (max-width: 500px) {
 
-  .book-image {
+  .product-image {
     height: 250px;
   }
 
-  .book-info {
+  .product-info {
     padding: 15px;
   }
 

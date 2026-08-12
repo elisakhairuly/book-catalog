@@ -2,21 +2,29 @@
 
   <div class="navbar-inner">
 
+    <!-- =========================
+         BRAND
+    ========================== -->
+
     <a
       class="brand"
       routerLink="/home"
     >
 
       <span class="brand-mark">
-        B
+        P
       </span>
 
       <span class="brand-name">
-        Book Catalog
+        Product Catalog
       </span>
 
     </a>
 
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
 
     <nav class="nav-links">
 
@@ -28,11 +36,41 @@
         Home
       </a>
 
+
       <a
         routerLink="/book"
         routerLinkActive="active"
       >
-        Books
+        Products
+      </a>
+
+
+      <!-- =========================
+           CART
+      ========================== -->
+
+      <a
+        class="cart-link"
+        routerLink="/cart"
+        routerLinkActive="active"
+      >
+
+        <span class="cart-icon">
+          🛒
+        </span>
+
+        <span>
+          Cart
+        </span>
+
+        @if (totalItems() > 0) {
+
+          <span class="cart-count">
+            {{ totalItems() }}
+          </span>
+
+        }
+
       </a>
 
     </nav>

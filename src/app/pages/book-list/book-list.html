@@ -15,13 +15,13 @@
         </span>
 
         <h2>
-          Find Your Next<br>
-          Favorite Book
+          Find What You<br>
+          Love
         </h2>
 
         <p>
-          Temukan berbagai koleksi dan informasi menarik
-          dalam katalog kami.
+          Temukan berbagai pilihan produk dan informasi
+          menarik dalam katalog kami.
         </p>
 
       </div>
@@ -30,7 +30,7 @@
 
 
     <!-- =========================
-         BOOK SECTION
+         PRODUCT SECTION
     ========================== -->
 
     <section class="books-section">
@@ -42,11 +42,11 @@
         <div>
 
           <span class="section-label">
-            CATALOG
+            PRODUCT CATALOG
           </span>
 
           <h2>
-            Daftar Buku
+            Koleksi Produk
           </h2>
 
         </div>
@@ -56,7 +56,7 @@
 
           <span class="book-count">
             Showing {{ startItem }}–{{ endItem }}
-            of {{ totalItems }} books
+            of {{ totalItems }} products
           </span>
 
         }
@@ -79,7 +79,7 @@
           </h3>
 
           <p>
-            Sedang mengambil data buku.
+            Sedang mengambil data produk.
           </p>
 
         </div>
@@ -140,7 +140,7 @@
 
             <input
               type="text"
-              placeholder="Cari buku..."
+              placeholder="Cari produk..."
               [value]="searchKeyword"
               (input)="searchBooks($event)"
             >
@@ -191,7 +191,7 @@
 
 
         <!-- =========================
-             BOOK LIST
+             PRODUCT LIST
         ========================== -->
 
         @if (books.length > 0) {
@@ -282,7 +282,7 @@
             </div>
 
             <h3>
-              Buku tidak ditemukan
+              Produk tidak ditemukan
             </h3>
 
             <p>
@@ -295,7 +295,7 @@
               type="button"
               (click)="resetFilters()"
             >
-              Tampilkan Semua Buku
+              Tampilkan Semua Produk
             </button>
 
           </div>

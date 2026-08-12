@@ -1,6 +1,37 @@
 <div class="detail-page">
 
+
+  <!-- =========================
+       CART NOTIFICATION
+  ========================== -->
+
+  @if (showCartNotification) {
+
+    <div class="cart-notification">
+
+      <span class="notification-icon">
+        ✓
+      </span>
+
+      <div class="notification-content">
+
+        <strong>
+          Produk berhasil ditambahkan
+        </strong>
+
+        <p>
+          {{ book?.title }}
+        </p>
+
+      </div>
+
+    </div>
+
+  }
+
+
   @if (isLoading) {
+
 
     <!-- =========================
          LOADING
@@ -11,18 +42,20 @@
       <div class="loading-spinner"></div>
 
       <h3>
-        Memuat detail buku...
+        Memuat detail produk...
       </h3>
 
       <p>
-        Sedang mengambil informasi buku.
+        Sedang mengambil informasi produk.
       </p>
 
     </div>
 
   }
 
+
   @else if (errorMessage) {
+
 
     <!-- =========================
          ERROR
@@ -35,11 +68,11 @@
       </div>
 
       <span class="error-label">
-        BOOK NOT FOUND
+        PRODUCT NOT FOUND
       </span>
 
       <h3>
-        Buku tidak ditemukan
+        Produk tidak ditemukan
       </h3>
 
       <p>
@@ -57,7 +90,9 @@
 
   }
 
+
   @else if (book) {
+
 
     <!-- =========================
          BACK TO CATALOG
@@ -103,6 +138,7 @@
 
       <section class="product-info">
 
+
         <!-- CATEGORY -->
 
         <span class="category">
@@ -110,7 +146,7 @@
         </span>
 
 
-        <!-- TITLE -->
+        <!-- PRODUCT NAME -->
 
         <h1>
           {{ book.title }}
@@ -140,6 +176,7 @@
         ========================== -->
 
         <div class="product-meta">
+
 
           <div class="meta-item">
 
@@ -179,6 +216,7 @@
 
           </div>
 
+
         </div>
 
 
@@ -187,6 +225,7 @@
         ========================== -->
 
         <div class="purchase-row">
+
 
           <div>
 
@@ -204,16 +243,21 @@
           <button
             class="primary-button"
             type="button"
+            (click)="addToCart()"
           >
-            Add to Collection
+            Add to Cart
           </button>
+
 
         </div>
 
+
       </section>
+
 
     </main>
 
   }
+
 
 </div>

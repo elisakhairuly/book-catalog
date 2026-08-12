@@ -7,28 +7,29 @@
     <div class="hero-copy">
 
       <span class="eyebrow">
-        BOOK CATALOG
+        PRODUCT CATALOG
       </span>
 
       <h1>
-        Your next<br>
-        <em>great read.</em>
+        Discover<br>
+        <em>what you need.</em>
       </h1>
 
       <p>
-        Explore our collection, discover new titles,
-        and find a book worth your time.
+        Explore our collection, discover popular products,
+        and find something worth adding to your collection.
       </p>
 
       <a
         class="hero-button"
         routerLink="/book"
       >
-        Explore Collection
+        Explore Products
         <span>→</span>
       </a>
 
     </div>
+
 
     @if (featuredBooks.length > 0) {
 
@@ -66,7 +67,7 @@
   </section>
 
 
-  <!-- FEATURED COLLECTION -->
+  <!-- FEATURED PRODUCTS -->
 
   <section class="collection-section">
 
@@ -79,7 +80,7 @@
         </span>
 
         <h2>
-          Featured Collection
+          Featured Products
         </h2>
 
       </div>
@@ -97,7 +98,10 @@
 
     <div class="featured-grid">
 
-      @for (book of featuredBooks; track book.id) {
+      @for (
+        book of featuredBooks;
+        track book.id
+      ) {
 
         <app-book-card
           [book]="book"
@@ -119,15 +123,15 @@
     </span>
 
     <h2>
-      There's always another<br>
-      story waiting for you.
+      There's always something<br>
+      worth discovering.
     </h2>
 
     <a
       routerLink="/book"
       class="statement-link"
     >
-      Browse all books →
+      Browse all products →
     </a>
 
   </section>

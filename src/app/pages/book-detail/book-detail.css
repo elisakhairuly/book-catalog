@@ -18,6 +18,111 @@
 
 
 /* =========================
+   CART NOTIFICATION
+========================= */
+
+.cart-notification {
+  position: fixed;
+
+  top: 90px;
+  right: 24px;
+
+  z-index: 2000;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  width: 320px;
+
+  padding: 14px 16px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e7e7ec;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 12px 30px rgba(30, 30, 50, 0.12);
+
+  animation: notification-in 0.25s ease;
+}
+
+.notification-icon {
+  width: 30px;
+
+  height: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #6c63ff;
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  font-weight: 800;
+}
+
+.notification-content {
+  min-width: 0;
+}
+
+.cart-notification strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #25252b;
+
+  font-size: 13px;
+}
+
+.cart-notification p {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #888;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+@keyframes notification-in {
+
+  from {
+    opacity: 0;
+
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+
+}
+
+
+/* =========================
    BACK LINK
 ========================= */
 
@@ -35,6 +140,7 @@
   text-decoration: none;
 
   font-size: 13px;
+
   font-weight: 600;
 
   transition: color 0.2s ease;
@@ -80,11 +186,13 @@
 
 .image-wrapper {
   width: 100%;
+
   height: 500px;
 
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
   background: #ffffff;
@@ -101,6 +209,7 @@
 
 .image-wrapper img {
   width: 82%;
+
   height: 82%;
 
   object-fit: contain;
@@ -122,7 +231,9 @@
 }
 
 
-/* CATEGORY */
+/* =========================
+   CATEGORY
+========================= */
 
 .category {
   display: inline-block;
@@ -132,6 +243,7 @@
   color: #6c63ff;
 
   font-size: 10px;
+
   font-weight: 800;
 
   letter-spacing: 1.5px;
@@ -140,7 +252,9 @@
 }
 
 
-/* TITLE */
+/* =========================
+   PRODUCT TITLE
+========================= */
 
 .product-info h1 {
   margin: 0 0 14px;
@@ -171,6 +285,7 @@
   color: #666;
 
   font-size: 14px;
+
   font-weight: 600;
 }
 
@@ -232,6 +347,7 @@
   color: #999;
 
   font-size: 9px;
+
   font-weight: 700;
 
   letter-spacing: 1px;
@@ -247,7 +363,7 @@
 
 
 /* =========================
-   PRICE & ACTION
+   PRICE & CART
 ========================= */
 
 .purchase-row {
@@ -263,7 +379,9 @@
 }
 
 
-/* PRICE LABEL */
+/* =========================
+   PRICE LABEL
+========================= */
 
 .price-label {
   display: block;
@@ -280,7 +398,9 @@
 }
 
 
-/* PRICE */
+/* =========================
+   PRICE
+========================= */
 
 .price {
   color: #202027;
@@ -294,13 +414,14 @@
 
 
 /* =========================
-   ADD TO COLLECTION
+   ADD TO CART
 ========================= */
 
 .primary-button {
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
 
   min-height: 46px;
@@ -357,6 +478,7 @@
 
 .loading-spinner {
   width: 32px;
+
   height: 32px;
 
   margin-bottom: 18px;
@@ -419,11 +541,13 @@
 
 .error-icon {
   width: 44px;
+
   height: 44px;
 
   display: flex;
 
   align-items: center;
+
   justify-content: center;
 
   margin-bottom: 14px;
@@ -472,7 +596,9 @@
 }
 
 
-/* ERROR BACK BUTTON */
+/* =========================
+   ERROR BACK BUTTON
+========================= */
 
 .back-button {
   display: inline-flex;
@@ -534,6 +660,16 @@
 
   .detail-page {
     padding: 30px 16px 60px;
+  }
+
+  .cart-notification {
+    top: 78px;
+
+    right: 16px;
+
+    left: 16px;
+
+    width: auto;
   }
 
   .back-link {

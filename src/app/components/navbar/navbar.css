@@ -142,6 +142,42 @@
   background: #f0efff;
 }
 
+/* =========================
+   CART
+========================= */
+
+.cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-icon {
+  font-size: 14px;
+}
+
+.cart-count {
+  min-width: 18px;
+  height: 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 5px;
+
+  box-sizing: border-box;
+
+  border-radius: 999px;
+
+  background: #6c63ff;
+  color: white;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  line-height: 1;
+}
 
 /* =========================
    MOBILE

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { BookCard } from '../../components/book-card/book-card';
 import { BookService } from '../../services/book';
+import { ProductStateService } from '../../services/product-state';
 
 @Component({
   selector: 'app-book-list',
@@ -22,7 +23,6 @@ export class BookList {
 
   categories: string[] = [];
 
-
   // =========================
   // FILTER
   // =========================
@@ -30,7 +30,6 @@ export class BookList {
   searchKeyword = '';
 
   selectedCategory = '';
-
 
   // =========================
   // PAGINATION
@@ -42,7 +41,6 @@ export class BookList {
 
   totalItems = 0;
 
-
   // =========================
   // STATE
   // =========================
@@ -51,11 +49,14 @@ export class BookList {
 
   errorMessage = '';
 
+  // =========================
+  // CONSTRUCTOR
+  // =========================
 
   constructor(
-    private bookService: BookService
+    private bookService: BookService,
+    private productState: ProductStateService
   ) {}
-
 
   // =========================
   // INITIAL LOAD
@@ -73,6 +74,10 @@ export class BookList {
 
         this.allBooks = data.products;
 
+        // Simpan products ke shared state
+        this.productState.setProducts(data.products);
+
+        // Ambil kategori
         this.categories = Array.from(
           new Set(
             data.products.map(
@@ -92,14 +97,13 @@ export class BookList {
         this.isLoading = false;
 
         this.errorMessage =
-          'Gagal mengambil data buku. Silakan coba lagi.';
+          'Gagal mengambil data produk. Silakan coba lagi.';
 
       }
 
     });
 
   }
-
 
   // =========================
   // SEARCH
@@ -116,7 +120,6 @@ export class BookList {
 
   }
 
-
   // =========================
   // CATEGORY
   // =========================
@@ -131,7 +134,6 @@ export class BookList {
     this.applyFilters();
 
   }
-
 
   // =========================
   // FILTER DATA
@@ -158,24 +160,17 @@ export class BookList {
 
       });
 
-
     // Total hasil setelah filter
-
     this.totalItems =
       this.filteredBooks.length;
 
-
-    // Set kembali ke halaman pertama
-
+    // Kembali ke halaman pertama
     this.currentPage = 1;
 
-
     // Tampilkan data sesuai halaman
-
     this.updatePage();
 
   }
-
 
   // =========================
   // UPDATE CURRENT PAGE
@@ -198,7 +193,6 @@ export class BookList {
 
   }
 
-
   // =========================
   // TOTAL PAGES
   // =========================
@@ -211,7 +205,6 @@ export class BookList {
     );
 
   }
-
 
   // =========================
   // PAGE NUMBERS
@@ -227,7 +220,6 @@ export class BookList {
     );
 
   }
-
 
   // =========================
   // START ITEM
@@ -246,7 +238,6 @@ export class BookList {
 
   }
 
-
   // =========================
   // END ITEM
   // =========================
@@ -261,7 +252,6 @@ export class BookList {
     );
 
   }
-
 
   // =========================
   // CHANGE PAGE
@@ -281,14 +271,12 @@ export class BookList {
     this.updatePage();
 
     // Scroll kembali ke bagian atas katalog
-
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
 
   }
-
 
   // =========================
   // RESET

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BookCard } from '../../components/book-card/book-card';
 import { BookService } from '../../services/book';
 import { ProductStateService } from '../../services/product-state';
@@ -23,6 +24,7 @@ export class BookList {
 
   categories: string[] = [];
 
+
   // =========================
   // FILTER
   // =========================
@@ -30,6 +32,7 @@ export class BookList {
   searchKeyword = '';
 
   selectedCategory = '';
+
 
   // =========================
   // PAGINATION
@@ -41,6 +44,7 @@ export class BookList {
 
   totalItems = 0;
 
+
   // =========================
   // STATE
   // =========================
@@ -49,14 +53,18 @@ export class BookList {
 
   errorMessage = '';
 
+
   // =========================
   // CONSTRUCTOR
   // =========================
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private bookService: BookService,
     private productState: ProductStateService
   ) {}
+
 
   // =========================
   // INITIAL LOAD
@@ -68,29 +76,67 @@ export class BookList {
 
     this.errorMessage = '';
 
+
+    // =========================
+    // GET PRODUCTS
+    // =========================
+
     this.bookService.getBooks().subscribe({
 
       next: (data: any) => {
 
         this.allBooks = data.products;
 
-        // Simpan products ke shared state
-        this.productState.setProducts(data.products);
 
-        // Ambil kategori
+        // =========================
+        // PRODUCT STATE
+        // =========================
+
+        this.productState.setProducts(
+          data.products
+        );
+
+
+        // =========================
+        // GET CATEGORIES
+        // =========================
+
         this.categories = Array.from(
           new Set(
             data.products.map(
-              (book: any) => book.category as string
+              (book: any) =>
+                book.category as string
             )
           )
         );
 
+
+        // =========================
+        // READ QUERY PARAMS
+        // =========================
+
+        this.route.queryParams.subscribe(params => {
+
+          this.searchKeyword =
+            (params['search'] || '').toLowerCase();
+
+          this.selectedCategory =
+            params['category'] || '';
+
+
+          // =========================
+          // APPLY FILTER
+          // =========================
+
+          this.applyFilters();
+
+        });
+
+
         this.isLoading = false;
 
-        this.applyFilters();
-
       },
+
 
       error: () => {
 
@@ -105,6 +151,7 @@ export class BookList {
 
   }
 
+
   // =========================
   // SEARCH
   // =========================
@@ -116,9 +163,11 @@ export class BookList {
         event.target as HTMLInputElement
       ).value.toLowerCase();
 
-    this.applyFilters();
+
+    this.updateQueryParams();
 
   }
+
 
   // =========================
   // CATEGORY
@@ -131,9 +180,62 @@ export class BookList {
         event.target as HTMLSelectElement
       ).value;
 
-    this.applyFilters();
+
+    this.updateQueryParams();
 
   }
+
+
+  // =========================
+  // UPDATE QUERY PARAMETERS
+  // =========================
+
+  private updateQueryParams() {
+
+    const queryParams: {
+      search?: string;
+      category?: string;
+    } = {};
+
+
+    // =========================
+    // SEARCH
+    // =========================
+
+    if (this.searchKeyword.trim()) {
+
+      queryParams.search =
+        this.searchKeyword.trim();
+
+    }
+
+
+    // =========================
+    // CATEGORY
+    // =========================
+
+    if (this.selectedCategory) {
+
+      queryParams.category =
+        this.selectedCategory;
+
+    }
+
+
+    // =========================
+    // UPDATE URL
+    // =========================
+
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: queryParams
+      }
+    );
+
+  }
+
 
   // =========================
   // FILTER DATA
@@ -144,14 +246,32 @@ export class BookList {
     this.filteredBooks =
       this.allBooks.filter((book: any) => {
 
+        const title =
+          String(book.title || '').toLowerCase();
+
+
+        const category =
+          String(book.category || '');
+
+
+        // =========================
+        // SEARCH MATCH
+        // =========================
+
         const matchesSearch =
-          book.title
-            .toLowerCase()
-            .includes(this.searchKeyword);
+          title.includes(
+            this.searchKeyword
+          );
+
+
+        // =========================
+        // CATEGORY MATCH
+        // =========================
 
         const matchesCategory =
           !this.selectedCategory ||
-          book.category === this.selectedCategory;
+          category === this.selectedCategory;
+
 
         return (
           matchesSearch &&
@@ -160,17 +280,30 @@ export class BookList {
 
       });
 
-    // Total hasil setelah filter
+
+    // =========================
+    // TOTAL RESULT
+    // =========================
+
     this.totalItems =
       this.filteredBooks.length;
 
-    // Kembali ke halaman pertama
+
+    // =========================
+    // RESET PAGE
+    // =========================
+
     this.currentPage = 1;
 
-    // Tampilkan data sesuai halaman
+
+    // =========================
+    // UPDATE PAGE
+    // =========================
+
     this.updatePage();
 
   }
+
 
   // =========================
   // UPDATE CURRENT PAGE
@@ -182,8 +315,10 @@ export class BookList {
       (this.currentPage - 1) *
       this.pageSize;
 
+
     const end =
       start + this.pageSize;
+
 
     this.books =
       this.filteredBooks.slice(
@@ -192,6 +327,7 @@ export class BookList {
       );
 
   }
+
 
   // =========================
   // TOTAL PAGES
@@ -205,6 +341,7 @@ export class BookList {
     );
 
   }
+
 
   // =========================
   // PAGE NUMBERS
@@ -221,6 +358,7 @@ export class BookList {
 
   }
 
+
   // =========================
   // START ITEM
   // =========================
@@ -231,12 +369,14 @@ export class BookList {
       return 0;
     }
 
+
     return (
       (this.currentPage - 1) *
       this.pageSize
     ) + 1;
 
   }
+
 
   // =========================
   // END ITEM
@@ -247,11 +387,11 @@ export class BookList {
     return Math.min(
       this.currentPage *
       this.pageSize,
-
       this.totalItems
     );
 
   }
+
 
   // =========================
   // CHANGE PAGE
@@ -266,17 +406,22 @@ export class BookList {
       return;
     }
 
+
     this.currentPage = page;
+
 
     this.updatePage();
 
-    // Scroll kembali ke bagian atas katalog
+
+    // Scroll ke atas
+
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
 
   }
+
 
   // =========================
   // RESET
@@ -290,7 +435,16 @@ export class BookList {
 
     this.currentPage = 1;
 
-    this.applyFilters();
+
+    // Hapus query params
+
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: {}
+      }
+    );
 
   }
 

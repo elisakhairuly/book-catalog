@@ -6,10 +6,20 @@ import { Injectable, signal, computed } from '@angular/core';
 export class CartStateService {
 
   // =========================
+  // STORAGE KEY
+  // =========================
+
+  private readonly storageKey = 'product-cart';
+
+
+  // =========================
   // CART DATA
   // =========================
 
-  cartItems = signal<any[]>([]);
+  cartItems = signal<any[]>(
+    this.loadCart()
+  );
+
 
   // =========================
   // TOTAL ITEMS
@@ -23,6 +33,7 @@ export class CartStateService {
     );
 
   });
+
 
   // =========================
   // TOTAL PRICE
@@ -38,18 +49,66 @@ export class CartStateService {
 
   });
 
+
+  // =========================
+  // LOAD CART FROM STORAGE
+  // =========================
+
+  private loadCart(): any[] {
+
+    const savedCart =
+      localStorage.getItem(this.storageKey);
+
+    if (!savedCart) {
+      return [];
+    }
+
+    try {
+
+      const cart =
+        JSON.parse(savedCart);
+
+      return Array.isArray(cart)
+        ? cart
+        : [];
+
+    } catch {
+
+      return [];
+
+    }
+
+  }
+
+
+  // =========================
+  // SAVE CART TO STORAGE
+  // =========================
+
+  private saveCart(): void {
+
+    localStorage.setItem(
+      this.storageKey,
+      JSON.stringify(this.cartItems())
+    );
+
+  }
+
+
   // =========================
   // ADD TO CART
   // =========================
 
   addToCart(product: any) {
 
-    const currentItems = this.cartItems();
+    const currentItems =
+      this.cartItems();
 
     const existingItem =
       currentItems.find(
         item => item.id === product.id
       );
+
 
     if (existingItem) {
 
@@ -76,7 +135,13 @@ export class CartStateService {
 
     }
 
+
+    // Simpan perubahan
+
+    this.saveCart();
+
   }
+
 
   // =========================
   // REMOVE FROM CART
@@ -90,7 +155,13 @@ export class CartStateService {
       )
     );
 
+
+    // Simpan perubahan
+
+    this.saveCart();
+
   }
+
 
   // =========================
   // INCREASE QUANTITY
@@ -109,7 +180,13 @@ export class CartStateService {
       )
     );
 
+
+    // Simpan perubahan
+
+    this.saveCart();
+
   }
+
 
   // =========================
   // DECREASE QUANTITY
@@ -117,7 +194,9 @@ export class CartStateService {
 
   decreaseQuantity(productId: number) {
 
-    const currentItems = this.cartItems();
+    const currentItems =
+      this.cartItems();
+
 
     this.cartItems.set(
       currentItems
@@ -129,10 +208,18 @@ export class CartStateService {
               }
             : item
         )
-        .filter(item => item.quantity > 0)
+        .filter(
+          item => item.quantity > 0
+        )
     );
 
+
+    // Simpan perubahan
+
+    this.saveCart();
+
   }
+
 
   // =========================
   // CLEAR CART
@@ -141,6 +228,13 @@ export class CartStateService {
   clearCart() {
 
     this.cartItems.set([]);
+
+
+    // Hapus data dari storage
+
+    localStorage.removeItem(
+      this.storageKey
+    );
 
   }
 

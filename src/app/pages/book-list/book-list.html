@@ -148,25 +148,37 @@
           </div>
 
 
-          <!-- CATEGORY -->
+          <!-- =========================
+               CATEGORY
+          ========================== -->
 
           <div class="filter-box">
 
             <select
-              [value]="selectedCategory"
               (change)="filterByCategory($event)"
             >
 
-              <option value="">
+              <!-- DEFAULT -->
+
+              <option
+                value=""
+                [selected]="selectedCategory === ''"
+              >
                 Semua Kategori
               </option>
+
+
+              <!-- CATEGORIES -->
 
               @for (
                 category of categories;
                 track category
               ) {
 
-                <option [value]="category">
+                <option
+                  [value]="category"
+                  [selected]="selectedCategory === category"
+                >
                   {{ category }}
                 </option>
 

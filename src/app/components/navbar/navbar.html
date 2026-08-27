@@ -3,9 +3,9 @@
   <div class="navbar-inner">
 
 
-    <!-- =========================
+    <!-- =====================================================
          BRAND
-    ========================== -->
+    ====================================================== -->
 
     <a
       class="brand"
@@ -24,9 +24,9 @@
     </a>
 
 
-    <!-- =========================
+    <!-- =====================================================
          DESKTOP SEARCH
-    ========================== -->
+    ====================================================== -->
 
     <form
       class="navbar-search desktop-search"
@@ -93,14 +93,12 @@
     </form>
 
 
-    <!-- =========================
+    <!-- =====================================================
          DESKTOP NAVIGATION
-    ========================== -->
+    ====================================================== -->
 
     <nav class="nav-links desktop-navigation">
 
-
-      <!-- HOME -->
 
       <a
         routerLink="/home"
@@ -113,8 +111,6 @@
       </a>
 
 
-      <!-- PRODUCTS -->
-
       <a
         routerLink="/book"
         routerLinkActive="active"
@@ -123,12 +119,11 @@
       </a>
 
 
-      <!-- =========================
-           CART
-      ========================== -->
+      <!-- ===================================================
+           DESKTOP CART
+      ==================================================== -->
 
       <div class="cart-wrapper">
-
 
         <button
           class="cart-link"
@@ -185,14 +180,16 @@
         </button>
 
 
-        <!-- =========================
-             MINI CART DESKTOP
-        ========================== -->
+        <!-- =================================================
+             DESKTOP MINI CART
+        ================================================== -->
 
         @if (showMiniCart) {
 
-          <div class="mini-cart">
-
+          <div
+            class="mini-cart desktop-mini-cart"
+            (click)="$event.stopPropagation()"
+          >
 
             <div class="mini-cart-header">
 
@@ -277,7 +274,6 @@
                 ) {
 
                   <div class="mini-cart-item">
-
 
                     <a
                       class="mini-item-image"
@@ -463,9 +459,9 @@
       </div>
 
 
-      <!-- =========================
-           NOT LOGGED IN
-      ========================== -->
+      <!-- ===================================================
+           DESKTOP AUTH
+      ==================================================== -->
 
       @if (!isLoggedIn()) {
 
@@ -487,11 +483,6 @@
         </a>
 
       }
-
-
-      <!-- =========================
-           LOGGED IN
-      ========================== -->
 
       @else {
 
@@ -581,6 +572,7 @@
 
             </svg>
 
+
             <span class="logout-text">
               Logout
             </span>
@@ -595,15 +587,15 @@
 
 
     <!-- =====================================================
-         MOBILE ACTIONS
+         MOBILE NAVIGATION
     ====================================================== -->
 
     <div class="mobile-navigation-area">
 
 
-      <!-- =========================
+      <!-- ===================================================
            MOBILE CART
-      ========================== -->
+      ==================================================== -->
 
       <div class="cart-wrapper mobile-cart-wrapper">
 
@@ -657,14 +649,16 @@
         </button>
 
 
-        <!-- =========================
-             MINI CART MOBILE
-        ========================== -->
+        <!-- =================================================
+             MOBILE MINI CART
+        ================================================== -->
 
         @if (showMiniCart) {
 
-          <div class="mini-cart mobile-mini-cart">
-
+          <div
+            class="mini-cart mobile-mini-cart"
+            (click)="$event.stopPropagation()"
+          >
 
             <div class="mini-cart-header">
 
@@ -696,6 +690,7 @@
 
                   <svg
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
 
                     <path
@@ -724,6 +719,7 @@
                   </svg>
 
                 </div>
+
 
                 <strong>
                   Keranjang masih kosong
@@ -795,9 +791,11 @@
                             −
                           </button>
 
+
                           <span>
                             {{ item.quantity }}
                           </span>
+
 
                           <button
                             type="button"
@@ -926,9 +924,9 @@
       </div>
 
 
-      <!-- =========================
+      <!-- ===================================================
            HAMBURGER
-      ========================== -->
+      ==================================================== -->
 
       <button
         class="menu-toggle"
@@ -945,9 +943,9 @@
       </button>
 
 
-      <!-- =========================
-           MOBILE MENU
-      ========================== -->
+      <!-- ===================================================
+           MOBILE DRAWER
+      ==================================================== -->
 
       @if (showMobileMenu) {
 
@@ -957,72 +955,36 @@
         >
 
 
-          <!-- MOBILE SEARCH -->
+          <div class="mobile-menu-header">
 
-          <form
-            class="mobile-search"
-            (ngSubmit)="searchProducts()"
-          >
+            <div>
 
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
+              <span class="mobile-menu-label">
+                NAVIGATION
+              </span>
 
-              <circle
-                cx="11"
-                cy="11"
-                r="6.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-              />
+              <strong>
+                Menu
+              </strong>
 
-              <path
-                d="M16 16l4 4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-              />
-
-            </svg>
-
-
-            <input
-              type="text"
-              name="mobileSearch"
-              placeholder="Cari produk..."
-              [(ngModel)]="searchKeyword"
-              (input)="searchProductsLive()"
-              autocomplete="off"
-            >
-
-
-            @if (searchKeyword) {
-
-              <button
-                class="mobile-clear-search"
-                type="button"
-                (click)="clearSearch()"
-              >
-                ×
-              </button>
-
-            }
+            </div>
 
 
             <button
-              class="mobile-search-submit"
-              type="submit"
+              class="mobile-menu-close"
+              type="button"
+              aria-label="Tutup menu"
+              (click)="closeMobileMenu()"
             >
-              Cari
+              ×
             </button>
 
-          </form>
+          </div>
 
 
-          <!-- MOBILE LINKS -->
+          <!-- =================================================
+               MOBILE LINKS
+          ================================================== -->
 
           <div class="mobile-menu-links">
 
@@ -1035,20 +997,36 @@
               (click)="closeMobileMenu()"
             >
 
-              <svg
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M4 10.5L12 4l8 6.5V20h-5v-6H9v6H4z"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linejoin="round"
-                />
-              </svg>
+              <span class="mobile-link-icon">
 
-              <span>
-                Home
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+
+                  <path
+                    d="M4 10.5L12 4l8 6.5V20h-5v-6H9v6H4z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linejoin="round"
+                  />
+
+                </svg>
+
+              </span>
+
+
+              <span class="mobile-link-copy">
+
+                <strong>
+                  Home
+                </strong>
+
+                <small>
+                  Kembali ke halaman utama
+                </small>
+
               </span>
 
             </a>
@@ -1060,56 +1038,72 @@
               (click)="closeMobileMenu()"
             >
 
-              <svg
-                viewBox="0 0 24 24"
-              >
-                <rect
-                  x="4"
-                  y="4"
-                  width="6"
-                  height="6"
-                  rx="1"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                />
+              <span class="mobile-link-icon">
 
-                <rect
-                  x="14"
-                  y="4"
-                  width="6"
-                  height="6"
-                  rx="1"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                />
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
 
-                <rect
-                  x="4"
-                  y="14"
-                  width="6"
-                  height="6"
-                  rx="1"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                />
+                  <rect
+                    x="4"
+                    y="4"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
 
-                <rect
-                  x="14"
-                  y="14"
-                  width="6"
-                  height="6"
-                  rx="1"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                />
-              </svg>
+                  <rect
+                    x="14"
+                    y="4"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
 
-              <span>
-                Products
+                  <rect
+                    x="4"
+                    y="14"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+
+                  <rect
+                    x="14"
+                    y="14"
+                    width="6"
+                    height="6"
+                    rx="1"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+
+                </svg>
+
+              </span>
+
+
+              <span class="mobile-link-copy">
+
+                <strong>
+                  Products
+                </strong>
+
+                <small>
+                  Lihat semua katalog produk
+                </small>
+
               </span>
 
             </a>
@@ -1117,31 +1111,39 @@
           </div>
 
 
-          <!-- =========================
-               MOBILE AUTH
-          ========================== -->
+          <!-- =================================================
+               MOBILE ACCOUNT
+          ================================================== -->
 
           <div class="mobile-account">
+
+            <span class="mobile-section-label">
+              AKUN
+            </span>
 
 
             @if (!isLoggedIn()) {
 
-              <a
-                class="mobile-login"
-                routerLink="/login"
-                (click)="closeMobileMenu()"
-              >
-                Login
-              </a>
+              <div class="mobile-auth-buttons">
+
+                <a
+                  class="mobile-login"
+                  routerLink="/login"
+                  (click)="closeMobileMenu()"
+                >
+                  Login
+                </a>
 
 
-              <a
-                class="mobile-register"
-                routerLink="/register"
-                (click)="closeMobileMenu()"
-              >
-                Register
-              </a>
+                <a
+                  class="mobile-register"
+                  routerLink="/register"
+                  (click)="closeMobileMenu()"
+                >
+                  Register
+                </a>
+
+              </div>
 
             }
 
@@ -1153,6 +1155,7 @@
 
                   <svg
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
 
                     <circle
@@ -1200,6 +1203,7 @@
 
                 <svg
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
 
                   <path
@@ -1244,5 +1248,83 @@
     </div>
 
   </div>
+
+
+  <!-- =====================================================
+       MOBILE SEARCH OUTSIDE DRAWER
+       HANYA HOME & PRODUCT
+  ====================================================== -->
+
+  @if (isHomePage || isProductPage) {
+
+    <div class="mobile-search-bar">
+
+      <form
+        class="mobile-navbar-search"
+        (ngSubmit)="searchProducts()"
+      >
+
+        <svg
+          class="mobile-navbar-search-icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+
+          <circle
+            cx="11"
+            cy="11"
+            r="6.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          />
+
+          <path
+            d="M16 16l4 4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          />
+
+        </svg>
+
+
+        <input
+          type="text"
+          name="mobileNavbarSearch"
+          placeholder="Cari produk..."
+          [(ngModel)]="searchKeyword"
+          (input)="searchProductsLive()"
+          autocomplete="off"
+        >
+
+
+        @if (searchKeyword) {
+
+          <button
+            class="mobile-navbar-clear"
+            type="button"
+            aria-label="Hapus pencarian"
+            (click)="clearSearch()"
+          >
+            ×
+          </button>
+
+        }
+
+
+        <button
+          class="mobile-navbar-submit"
+          type="submit"
+        >
+          Cari
+        </button>
+
+      </form>
+
+    </div>
+
+  }
 
 </header>

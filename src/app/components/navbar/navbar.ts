@@ -127,7 +127,7 @@ export class Navbar {
 
 
           // =========================
-          // CLOSE DROPDOWNS
+          // CLOSE OPEN MENUS
           // =========================
 
           this.showMiniCart =
@@ -173,19 +173,41 @@ export class Navbar {
       this.showMiniCart
     ) {
 
-      const cartWrapper =
+      const cartWrappers =
         this.elementRef
           .nativeElement
-          .querySelector(
+          .querySelectorAll(
             '.cart-wrapper'
           );
 
 
+      let clickInsideCart =
+        false;
+
+
+      cartWrappers.forEach(
+        (
+          wrapper:
+            HTMLElement
+        ) => {
+
+          if (
+            wrapper.contains(
+              target
+            )
+          ) {
+
+            clickInsideCart =
+              true;
+
+          }
+
+        }
+      );
+
+
       if (
-        cartWrapper &&
-        !cartWrapper.contains(
-          target
-        )
+        !clickInsideCart
       ) {
 
         this.showMiniCart =
@@ -278,7 +300,7 @@ export class Navbar {
 
 
     // =========================
-    // READ SEARCH FROM URL
+    // PRODUCT SEARCH URL
     // =========================
 
     if (
@@ -301,7 +323,7 @@ export class Navbar {
 
 
     // =========================
-    // CLEAR SEARCH OTHER PAGE
+    // OTHER PAGE
     // =========================
 
     else if (
@@ -316,9 +338,9 @@ export class Navbar {
   }
 
 
-  // =========================
+  // =========================================================
   // LIVE SEARCH
-  // =========================
+  // =========================================================
 
   searchProductsLive() {
 
@@ -375,9 +397,9 @@ export class Navbar {
   }
 
 
-  // =========================
+  // =========================================================
   // SUBMIT SEARCH
-  // =========================
+  // =========================================================
 
   searchProducts() {
 
@@ -413,9 +435,9 @@ export class Navbar {
   }
 
 
-  // =========================
+  // =========================================================
   // CLEAR SEARCH
-  // =========================
+  // =========================================================
 
   clearSearch() {
 
@@ -440,7 +462,7 @@ export class Navbar {
 
 
     // =========================
-    // PRODUCT
+    // PRODUCTS
     // =========================
 
     if (
@@ -481,7 +503,7 @@ export class Navbar {
 
 
   // =========================================================
-  // CART TOTAL ITEMS
+  // TOTAL CART ITEMS
   // =========================================================
 
   get totalItems() {
@@ -493,7 +515,7 @@ export class Navbar {
 
 
   // =========================================================
-  // CART TOTAL PRICE
+  // TOTAL CART PRICE
   // =========================================================
 
   get totalPrice() {
@@ -558,7 +580,7 @@ export class Navbar {
 
 
     // =========================
-    // TOGGLE MINI CART
+    // TOGGLE CART
     // =========================
 
     this.showMiniCart =
@@ -580,18 +602,21 @@ export class Navbar {
 
 
   // =========================================================
-  // MOBILE MENU
+  // TOGGLE MOBILE MENU
   // =========================================================
 
   toggleMobileMenu(
     event: MouseEvent
   ) {
 
+    event.preventDefault();
+
     event.stopPropagation();
 
 
-    // Jangan tampil bersamaan
-    // dengan mini cart
+    // =========================
+    // CLOSE MINI CART
+    // =========================
 
     this.showMiniCart =
       false;
@@ -648,7 +673,7 @@ export class Navbar {
 
 
   // =========================================================
-  // REMOVE CART ITEM
+  // REMOVE ITEM
   // =========================================================
 
   removeCartItem(
@@ -664,7 +689,7 @@ export class Navbar {
 
 
   // =========================================================
-  // OPEN CART PAGE
+  // OPEN CART
   // =========================================================
 
   openCartPage() {
@@ -695,9 +720,6 @@ export class Navbar {
     this.showMobileMenu =
       false;
 
-
-    // Checkout final nanti.
-    // Untuk sekarang masuk cart.
 
     this.router.navigate(
       ['/cart']

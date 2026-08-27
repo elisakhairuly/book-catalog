@@ -2,148 +2,372 @@
 
   <div class="content">
 
+
     <!-- =========================
-         HERO
+         PAGE INTRO
     ========================== -->
 
-    <section class="hero">
+    <section class="catalog-intro">
 
-      <div class="hero-content">
+      <span class="intro-label">
+        PRODUCT CATALOG
+      </span>
 
-        <span class="hero-label">
-          EXPLORE COLLECTION
-        </span>
+      <h1>
+        Product Catalog
+      </h1>
 
-        <h2>
-          Find What You<br>
-          Love
-        </h2>
-
-        <p>
-          Temukan berbagai pilihan produk dan informasi
-          menarik dalam katalog kami.
-        </p>
-
-      </div>
+      <p>
+        Temukan produk yang kamu butuhkan
+        dengan harga terbaik.
+      </p>
 
     </section>
 
 
     <!-- =========================
-         PRODUCT SECTION
+         LOADING
     ========================== -->
 
-    <section class="books-section">
+    @if (isLoading) {
 
-      <!-- SECTION HEADER -->
+      <div class="loading-state">
 
-      <div class="section-header">
+        <div class="loading-spinner"></div>
 
-        <div>
+        <h3>
+          Memuat koleksi...
+        </h3>
 
-          <span class="section-label">
-            PRODUCT CATALOG
-          </span>
+        <p>
+          Sedang mengambil data produk.
+        </p>
 
-          <h2>
-            Koleksi Produk
-          </h2>
+      </div>
 
+    }
+
+
+    <!-- =========================
+         ERROR
+    ========================== -->
+
+    @else if (errorMessage) {
+
+      <div class="error-state">
+
+        <div class="error-icon">
+          !
         </div>
 
+        <h3>
+          Oops, terjadi kesalahan
+        </h3>
 
-        @if (!isLoading && !errorMessage && totalItems > 0) {
+        <p>
+          {{ errorMessage }}
+        </p>
 
-          <span class="book-count">
-            Showing {{ startItem }}–{{ endItem }}
-            of {{ totalItems }} products
+        <button
+          class="reset-button"
+          type="button"
+          (click)="ngOnInit()"
+        >
+          Coba Lagi
+        </button>
+
+      </div>
+
+    }
+
+
+    <!-- =========================
+         CATALOG
+    ========================== -->
+
+    @else {
+
+
+      <!-- =========================
+           MOBILE FILTER BUTTON
+      ========================== -->
+
+      <div class="mobile-filter-row">
+
+        <button
+          class="mobile-filter-button"
+          type="button"
+          (click)="openFilter()"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M4 6h16M7 12h10M10 18h4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+
+          </svg>
+
+          <span>
+            Filter & Urutkan
           </span>
 
-        }
+
+          @if (
+            activeFilterCount > 0
+          ) {
+
+            <span
+              class="filter-count"
+            >
+              {{ activeFilterCount }}
+            </span>
+
+          }
+
+        </button>
 
       </div>
 
 
       <!-- =========================
-           LOADING
+           TOOLBAR
       ========================== -->
 
-      @if (isLoading) {
+      <div class="catalog-toolbar">
 
-        <div class="loading-state">
+        <span class="result-count">
 
-          <div class="loading-spinner"></div>
+          Showing
+          {{ startItem }}–{{ endItem }}
+          of
+          {{ totalItems }}
+          products
 
-          <h3>
-            Memuat koleksi...
-          </h3>
-
-          <p>
-            Sedang mengambil data produk.
-          </p>
-
-        </div>
-
-      }
+        </span>
 
 
-      <!-- =========================
-           ERROR
-      ========================== -->
+        <div class="toolbar-actions">
 
-      @else if (errorMessage) {
 
-        <div class="error-state">
-
-          <div class="error-icon">
-            !
-          </div>
-
-          <h3>
-            Oops, terjadi kesalahan
-          </h3>
-
-          <p>
-            {{ errorMessage }}
-          </p>
+          <!-- =========================
+               GRID VIEW
+          ========================== -->
 
           <button
-            class="reset-button"
             type="button"
-            (click)="ngOnInit()"
+            class="view-button"
+            [class.active]="
+              viewMode === 'grid'
+            "
+            aria-label="Grid view"
+            (click)="
+              setViewMode('grid')
+            "
           >
-            Coba Lagi
+
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+
+              <rect
+                x="4"
+                y="4"
+                width="6"
+                height="6"
+                rx="1"
+              />
+
+              <rect
+                x="14"
+                y="4"
+                width="6"
+                height="6"
+                rx="1"
+              />
+
+              <rect
+                x="4"
+                y="14"
+                width="6"
+                height="6"
+                rx="1"
+              />
+
+              <rect
+                x="14"
+                y="14"
+                width="6"
+                height="6"
+                rx="1"
+              />
+
+            </svg>
+
           </button>
 
+
+          <!-- =========================
+               LIST VIEW
+          ========================== -->
+
+          <button
+            type="button"
+            class="view-button"
+            [class.active]="
+              viewMode === 'list'
+            "
+            aria-label="List view"
+            (click)="
+              setViewMode('list')
+            "
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+
+              <circle
+                cx="5"
+                cy="7"
+                r="1.2"
+              />
+
+              <circle
+                cx="5"
+                cy="12"
+                r="1.2"
+              />
+
+              <circle
+                cx="5"
+                cy="17"
+                r="1.2"
+              />
+
+              <path
+                d="M9 7h11M9 12h11M9 17h11"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+
+            </svg>
+
+          </button>
+
+
+          <!-- =========================
+               MINIMUM RATING
+          ========================== -->
+
+          <select
+            class="toolbar-rating"
+            [value]="selectedRating"
+            (change)="
+              changeRating($event)
+            "
+          >
+
+            <option value="0">
+              Semua Rating
+            </option>
+
+            <option value="4.5">
+              ★ 4.5 ke atas
+            </option>
+
+            <option value="4">
+              ★ 4.0 ke atas
+            </option>
+
+            <option value="3.5">
+              ★ 3.5 ke atas
+            </option>
+
+            <option value="3">
+              ★ 3.0 ke atas
+            </option>
+
+          </select>
+
         </div>
+
+      </div>
+
+
+      <!-- =========================
+           MOBILE OVERLAY
+      ========================== -->
+
+      @if (isFilterOpen) {
+
+        <button
+          class="filter-overlay"
+          type="button"
+          aria-label="Tutup filter"
+          (click)="closeFilter()"
+        ></button>
 
       }
 
 
       <!-- =========================
-           CONTENT
+           CATALOG LAYOUT
       ========================== -->
 
-      @else {
+      <div class="catalog-layout">
 
-        <!-- FILTER BAR -->
 
-        <div class="filter-bar">
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
 
-          <!-- SEARCH -->
+        <aside
+          class="catalog-sidebar"
+          [class.mobile-open]="
+            isFilterOpen
+          "
+        >
 
-          <div class="search-box">
 
-            <span class="search-icon">
-              ⌕
-            </span>
+          <!-- =========================
+               MOBILE DRAWER HEADER
+          ========================== -->
 
-            <input
-              type="text"
-              placeholder="Cari produk..."
-              [value]="searchKeyword"
-              (input)="searchBooks($event)"
+          <div class="mobile-filter-header">
+
+            <div>
+
+              <span>
+                FILTER
+              </span>
+
+              <h3>
+                Filter Produk
+              </h3>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="filter-close"
+              aria-label="Tutup filter"
+              (click)="closeFilter()"
             >
+              ×
+            </button>
 
           </div>
 
@@ -152,72 +376,84 @@
                CATEGORY
           ========================== -->
 
-          <div class="filter-box">
+          <div class="sidebar-box">
 
-            <select
-              (change)="filterByCategory($event)"
+            <h3>
+              Kategori
+            </h3>
+
+
+            <!-- ALL CATEGORY -->
+
+            <label
+              class="filter-option"
+              [class.active]="
+                selectedCategory === ''
+              "
             >
 
-              <!-- DEFAULT -->
-
-              <option
+              <input
+                type="radio"
+                name="category"
                 value=""
-                [selected]="selectedCategory === ''"
+                [checked]="
+                  selectedCategory === ''
+                "
+                (change)="
+                  selectCategory('')
+                "
               >
+
+              <span
+                class="custom-radio"
+              ></span>
+
+              <span>
                 Semua Kategori
-              </option>
+              </span>
+
+            </label>
 
 
-              <!-- CATEGORIES -->
-
-              @for (
-                category of categories;
-                track category
-              ) {
-
-                <option
-                  [value]="category"
-                  [selected]="selectedCategory === category"
-                >
-                  {{ category }}
-                </option>
-
-              }
-
-            </select>
-
-          </div>
-
-
-          <!-- RESET -->
-
-          <button
-            class="reset-button"
-            type="button"
-            (click)="resetFilters()"
-          >
-            Reset
-          </button>
-
-        </div>
-
-
-        <!-- =========================
-             PRODUCT LIST
-        ========================== -->
-
-        @if (books.length > 0) {
-
-          <div class="books-container">
+            <!-- CATEGORY LIST -->
 
             @for (
-              book of books;
-              track book.id
+              category of categories;
+              track category
             ) {
 
-              <app-book-card
-                [book]="book"
-              ></app-book-card>
+              <label
+                class="filter-option"
+                [class.active]="
+                  selectedCategory ===
+                  category
+                "
+              >
+
+                <input
+                  type="radio"
+                  name="category"
+                  [value]="category"
+                  [checked]="
+                    selectedCategory ===
+                    category
+                  "
+                  (change)="
+                    selectCategory(
+                      category
+                    )
+                  "
+                >
+
+                <span
+                  class="custom-radio"
+                ></span>
+
+                <span>
+                  {{ category }}
+                </span>
+
+              </label>
 
             }
 
@@ -225,98 +461,424 @@
 
 
           <!-- =========================
-               PAGINATION
+               SORT
           ========================== -->
 
-          @if (totalPages > 1) {
+          <div class="sidebar-box">
 
-            <div class="pagination">
+            <h3>
+              Urutkan
+            </h3>
 
-              <!-- PREVIOUS -->
 
-              <button
-                type="button"
-                class="page-button arrow"
-                [disabled]="currentPage === 1"
-                (click)="changePage(currentPage - 1)"
+            <!-- NEWEST -->
+
+            <label
+              class="filter-option"
+              [class.active]="
+                selectedSort ===
+                'newest'
+              "
+            >
+
+              <input
+                type="radio"
+                name="sort"
+                value="newest"
+                [checked]="
+                  selectedSort ===
+                  'newest'
+                "
+                (change)="
+                  selectSort(
+                    'newest'
+                  )
+                "
               >
-                ←
-              </button>
+
+              <span
+                class="custom-radio"
+              ></span>
+
+              <span>
+                Terbaru
+              </span>
+
+            </label>
 
 
-              <!-- PAGE NUMBERS -->
+            <!-- PRICE ASC -->
+
+            <label
+              class="filter-option"
+              [class.active]="
+                selectedSort ===
+                'price-asc'
+              "
+            >
+
+              <input
+                type="radio"
+                name="sort"
+                value="price-asc"
+                [checked]="
+                  selectedSort ===
+                  'price-asc'
+                "
+                (change)="
+                  selectSort(
+                    'price-asc'
+                  )
+                "
+              >
+
+              <span
+                class="custom-radio"
+              ></span>
+
+              <span>
+                Harga: Rendah ke Tinggi
+              </span>
+
+            </label>
+
+
+            <!-- PRICE DESC -->
+
+            <label
+              class="filter-option"
+              [class.active]="
+                selectedSort ===
+                'price-desc'
+              "
+            >
+
+              <input
+                type="radio"
+                name="sort"
+                value="price-desc"
+                [checked]="
+                  selectedSort ===
+                  'price-desc'
+                "
+                (change)="
+                  selectSort(
+                    'price-desc'
+                  )
+                "
+              >
+
+              <span
+                class="custom-radio"
+              ></span>
+
+              <span>
+                Harga: Tinggi ke Rendah
+              </span>
+
+            </label>
+
+
+            <!-- RATING -->
+
+            <label
+              class="filter-option"
+              [class.active]="
+                selectedSort ===
+                'rating-desc'
+              "
+            >
+
+              <input
+                type="radio"
+                name="sort"
+                value="rating-desc"
+                [checked]="
+                  selectedSort ===
+                  'rating-desc'
+                "
+                (change)="
+                  selectSort(
+                    'rating-desc'
+                  )
+                "
+              >
+
+              <span
+                class="custom-radio"
+              ></span>
+
+              <span>
+                Rating Tertinggi
+              </span>
+
+            </label>
+
+
+            <!-- DISCOUNT -->
+
+            <label
+              class="filter-option"
+              [class.active]="
+                selectedSort ===
+                'discount-desc'
+              "
+            >
+
+              <input
+                type="radio"
+                name="sort"
+                value="discount-desc"
+                [checked]="
+                  selectedSort ===
+                  'discount-desc'
+                "
+                (change)="
+                  selectSort(
+                    'discount-desc'
+                  )
+                "
+              >
+
+              <span
+                class="custom-radio"
+              ></span>
+
+              <span>
+                Diskon Tertinggi
+              </span>
+
+            </label>
+
+          </div>
+
+
+          <!-- =========================
+               MOBILE RATING
+          ========================== -->
+
+          <div
+            class="sidebar-box mobile-rating-box"
+          >
+
+            <h3>
+              Minimum Rating
+            </h3>
+
+
+            <select
+              class="sidebar-rating"
+              [value]="selectedRating"
+              (change)="
+                changeRating($event)
+              "
+            >
+
+              <option value="0">
+                Semua Rating
+              </option>
+
+              <option value="4.5">
+                ★ 4.5 ke atas
+              </option>
+
+              <option value="4">
+                ★ 4.0 ke atas
+              </option>
+
+              <option value="3.5">
+                ★ 3.5 ke atas
+              </option>
+
+              <option value="3">
+                ★ 3.0 ke atas
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- =========================
+               RESET FILTER
+          ========================== -->
+
+          <button
+            class="sidebar-reset"
+            type="button"
+            (click)="resetFilters()"
+          >
+            Reset Filter
+          </button>
+
+
+          <!-- =========================
+               MOBILE APPLY BUTTON
+          ========================== -->
+
+          <button
+            class="mobile-apply-filter"
+            type="button"
+            (click)="closeFilter()"
+          >
+
+            Tampilkan
+            {{ totalItems }}
+            Produk
+
+          </button>
+
+        </aside>
+
+
+        <!-- =========================
+             PRODUCTS
+        ========================== -->
+
+        <main class="catalog-products">
+
+          @if (
+            books.length > 0
+          ) {
+
+            <div
+              class="books-container"
+              [class.list-view]="
+                viewMode === 'list'
+              "
+            >
 
               @for (
-                page of pageNumbers;
-                track page
+                book of books;
+                track book.id
               ) {
 
-                <button
-                  type="button"
-                  class="page-button"
-                  [class.active]="currentPage === page"
-                  (click)="changePage(page)"
-                >
-                  {{ page }}
-                </button>
+                <app-book-card
+                  [book]="book"
+                  [viewMode]="viewMode"
+                ></app-book-card>
 
               }
 
+            </div>
 
-              <!-- NEXT -->
+
+            <!-- =========================
+                 PAGINATION
+            ========================== -->
+
+            @if (
+              totalPages > 1
+            ) {
+
+              <div class="pagination">
+
+
+                <!-- PREVIOUS -->
+
+                <button
+                  type="button"
+                  class="page-button arrow"
+                  [disabled]="
+                    currentPage === 1
+                  "
+                  (click)="
+                    changePage(
+                      currentPage - 1
+                    )
+                  "
+                >
+                  ←
+                </button>
+
+
+                <!-- PAGE NUMBERS -->
+
+                @for (
+                  page of pageNumbers;
+                  track page
+                ) {
+
+                  <button
+                    type="button"
+                    class="page-button"
+                    [class.active]="
+                      currentPage ===
+                      page
+                    "
+                    (click)="
+                      changePage(page)
+                    "
+                  >
+                    {{ page }}
+                  </button>
+
+                }
+
+
+                <!-- NEXT -->
+
+                <button
+                  type="button"
+                  class="page-button arrow"
+                  [disabled]="
+                    currentPage ===
+                    totalPages
+                  "
+                  (click)="
+                    changePage(
+                      currentPage + 1
+                    )
+                  "
+                >
+                  →
+                </button>
+
+              </div>
+
+            }
+
+          }
+
+
+          <!-- =========================
+               EMPTY
+          ========================== -->
+
+          @else {
+
+            <div class="empty-state">
+
+              <div class="empty-icon">
+                ⌕
+              </div>
+
+              <h3>
+                Produk tidak ditemukan
+              </h3>
+
+              <p>
+                Coba gunakan kategori,
+                rating, atau urutan yang berbeda.
+              </p>
 
               <button
+                class="reset-button"
                 type="button"
-                class="page-button arrow"
-                [disabled]="currentPage === totalPages"
-                (click)="changePage(currentPage + 1)"
+                (click)="resetFilters()"
               >
-                →
+                Tampilkan Semua Produk
               </button>
 
             </div>
 
           }
 
-        }
+        </main>
 
+      </div>
 
-        <!-- =========================
-             EMPTY STATE
-        ========================== -->
-
-        @else {
-
-          <div class="empty-state">
-
-            <div class="empty-icon">
-              ⌕
-            </div>
-
-            <h3>
-              Produk tidak ditemukan
-            </h3>
-
-            <p>
-              Coba gunakan kata kunci atau kategori
-              yang berbeda.
-            </p>
-
-            <button
-              class="reset-button"
-              type="button"
-              (click)="resetFilters()"
-            >
-              Tampilkan Semua Produk
-            </button>
-
-          </div>
-
-        }
-
-      }
-
-    </section>
+    }
 
   </div>
 

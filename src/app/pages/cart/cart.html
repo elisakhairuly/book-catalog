@@ -2,6 +2,7 @@
 
   <div class="cart-container">
 
+
     <!-- =========================
          HEADER
     ========================== -->
@@ -18,37 +19,90 @@
           Your Cart
         </h1>
 
+        @if (
+          cartItems().length > 0
+        ) {
+
+          <p class="cart-description">
+            Pilih produk yang ingin
+            kamu lanjutkan ke checkout.
+          </p>
+
+        }
+
       </div>
+
 
       <a
         class="continue-link"
         routerLink="/book"
       >
-        ← Continue Shopping
+        <span>
+          ←
+        </span>
+
+        Continue Shopping
       </a>
 
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          EMPTY CART
-    ========================== -->
+    ====================================================== -->
 
-    @if (cartItems().length === 0) {
+    @if (
+      cartItems().length === 0
+    ) {
 
       <div class="empty-cart">
 
+
         <div class="empty-icon">
-          🛒
+
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 7H7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <circle
+              cx="10"
+              cy="19"
+              r="1.4"
+              fill="currentColor"
+            />
+
+            <circle
+              cx="17"
+              cy="19"
+              r="1.4"
+              fill="currentColor"
+            />
+
+          </svg>
+
         </div>
+
 
         <h2>
           Your cart is empty
         </h2>
 
+
         <p>
-          Belum ada produk yang ditambahkan ke keranjang.
+          Belum ada produk yang
+          ditambahkan ke keranjang.
         </p>
+
 
         <a
           class="shop-button"
@@ -62,158 +116,471 @@
     }
 
 
-    <!-- =========================
+    <!-- =====================================================
          CART CONTENT
-    ========================== -->
+    ====================================================== -->
 
     @else {
 
-      <div class="cart-layout">
+      <section class="cart-items">
 
 
         <!-- =========================
-             ITEMS
+             CART TOP BAR
         ========================== -->
 
-        <section class="cart-items">
-
-          @for (
-            item of cartItems();
-            track item.id
-          ) {
-
-            <div class="cart-item">
-
-              <!-- IMAGE -->
-
-              <div class="item-image">
-
-                <img
-                  [src]="item.thumbnail"
-                  [alt]="item.title"
-                >
-
-              </div>
+        <div class="cart-top-bar">
 
 
-              <!-- INFORMATION -->
+          <!-- SELECT ALL -->
 
-              <div class="item-info">
+          <label
+            class="select-all-top"
+          >
 
-                <span class="item-category">
-                  {{ item.category }}
-                </span>
-
-                <h3>
-                  {{ item.title }}
-                </h3>
-
-                <span class="item-price">
-                  ${{ item.price }}
-                </span>
-
-              </div>
+            <input
+              type="checkbox"
+              [checked]="
+                isAllSelected
+              "
+              (change)="
+                toggleSelectAll()
+              "
+            >
 
 
-              <!-- QUANTITY -->
+            <span>
+              Pilih Semua
+            </span>
 
-              <div class="quantity-control">
+          </label>
+
+
+          <!-- PRODUCT COUNT -->
+
+          <div class="top-bar-info">
+
+            <span>
+              {{ cartItems().length }}
+              produk
+            </span>
+
+            <span class="dot">
+              •
+            </span>
+
+            <span>
+              {{ totalItems() }}
+              item
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PRODUCT ITEMS
+        ================================================== -->
+
+        @for (
+          item of cartItems();
+          track item.id
+        ) {
+
+          <article
+            class="cart-item"
+            [class.selected]="
+              isSelected(
+                item.id
+              )
+            "
+          >
+
+
+            <!-- =========================
+                 CHECKBOX
+            ========================== -->
+
+            <div class="item-checkbox">
+
+              <input
+                type="checkbox"
+                [checked]="
+                  isSelected(
+                    item.id
+                  )
+                "
+                (change)="
+                  toggleProduct(
+                    item.id
+                  )
+                "
+              >
+
+            </div>
+
+
+            <!-- =========================
+                 IMAGE
+            ========================== -->
+
+            <a
+              class="item-image"
+              [routerLink]="[
+                '/book',
+                item.id
+              ]"
+            >
+
+              <img
+                [src]="
+                  item.thumbnail
+                "
+                [alt]="
+                  item.title
+                "
+              >
+
+            </a>
+
+
+            <!-- =========================
+                 INFORMATION
+            ========================== -->
+
+            <div class="item-info">
+
+              <span
+                class="item-category"
+              >
+                {{ item.category }}
+              </span>
+
+
+              <a
+                class="item-title"
+                [routerLink]="[
+                  '/book',
+                  item.id
+                ]"
+              >
+                {{ item.title }}
+              </a>
+
+
+              <span
+                class="item-price"
+              >
+                ${{ item.price }}
+              </span>
+
+            </div>
+
+
+            <!-- =========================
+                 QUANTITY
+            ========================== -->
+
+            <div class="quantity-area">
+
+              <span
+                class="quantity-label"
+              >
+                Quantity
+              </span>
+
+
+              <div
+                class="quantity-control"
+              >
 
                 <button
                   type="button"
-                  (click)="decreaseQuantity(item.id)"
+                  aria-label="
+                    Kurangi jumlah
+                  "
+                  (click)="
+                    decreaseQuantity(
+                      item.id
+                    )
+                  "
                 >
                   −
                 </button>
+
 
                 <span>
                   {{ item.quantity }}
                 </span>
 
+
                 <button
                   type="button"
-                  (click)="increaseQuantity(item.id)"
+                  aria-label="
+                    Tambah jumlah
+                  "
+                  (click)="
+                    increaseQuantity(
+                      item.id
+                    )
+                  "
                 >
                   +
                 </button>
 
               </div>
 
+            </div>
 
-              <!-- REMOVE -->
 
-              <button
-                class="remove-button"
-                type="button"
-                (click)="removeItem(item.id)"
-              >
-                Remove
-              </button>
+            <!-- =========================
+                 SUBTOTAL
+            ========================== -->
+
+            <div
+              class="item-subtotal"
+            >
+
+              <span>
+                Subtotal
+              </span>
+
+
+              <strong>
+
+                ${{
+                  (
+                    item.price *
+                    item.quantity
+                  ).toFixed(2)
+                }}
+
+              </strong>
 
             </div>
 
-          }
+
+            <!-- =========================
+                 REMOVE
+            ========================== -->
+
+            <button
+              class="remove-button"
+              type="button"
+              aria-label="
+                Hapus produk
+              "
+              (click)="
+                removeItem(
+                  item.id
+                )
+              "
+            >
+
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+
+                <path
+                  d="M5 7h14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+
+                <path
+                  d="M9 7V5h6v2"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+
+                <path
+                  d="M8 10v7M12 10v7M16 10v7"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+
+                <path
+                  d="M7 7l1 13h8l1-13"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linejoin="round"
+                />
+
+              </svg>
 
 
-          <!-- CLEAR -->
+              <span>
+                Remove
+              </span>
+
+            </button>
+
+          </article>
+
+        }
+
+
+        <!-- =========================
+             CART BOTTOM ACTION
+        ========================== -->
+
+        <div
+          class="cart-bottom-actions"
+        >
 
           <button
             class="clear-button"
             type="button"
             (click)="clearCart()"
           >
+
             Clear Cart
+
           </button>
 
-        </section>
+        </div>
+
+      </section>
 
 
-        <!-- =========================
-             SUMMARY
-        ========================== -->
+      <!-- =====================================================
+           STICKY CHECKOUT BAR
+      ====================================================== -->
 
-        <aside class="cart-summary">
+      <div class="checkout-bar">
 
-          <span class="summary-label">
-            ORDER SUMMARY
-          </span>
+        <div
+          class="checkout-bar-inner"
+        >
 
-          <h2>
-            Summary
-          </h2>
 
-          <div class="summary-row">
+          <!-- =========================
+               SELECT ALL
+          ========================== -->
+
+          <label
+            class="select-all"
+          >
+
+            <input
+              type="checkbox"
+              [checked]="
+                isAllSelected
+              "
+              (change)="
+                toggleSelectAll()
+              "
+            >
+
 
             <span>
-              Items
+              Pilih Semua
             </span>
 
-            <strong>
-              {{ totalItems() }}
-            </strong>
+          </label>
+
+
+          <!-- =========================
+               SELECTED INFORMATION
+          ========================== -->
+
+          <div
+            class="selected-info"
+          >
+
+            @if (
+              selectedProductCount > 0
+            ) {
+
+              <strong>
+                {{
+                  selectedProductCount
+                }}
+                produk dipilih
+              </strong>
+
+
+              <span>
+                {{
+                  selectedCount
+                }}
+                item
+              </span>
+
+            }
+
+            @else {
+
+              <span>
+                Belum ada produk dipilih
+              </span>
+
+            }
 
           </div>
 
-          <div class="summary-row total">
+
+          <!-- =========================
+               TOTAL
+          ========================== -->
+
+          <div
+            class="checkout-total"
+          >
 
             <span>
               Total
             </span>
 
+
             <strong>
-              ${{ totalPrice().toFixed(2) }}
+
+              ${{
+                selectedTotal
+                  .toFixed(2)
+              }}
+
             </strong>
 
           </div>
 
+
+          <!-- =========================
+               CHECKOUT
+          ========================== -->
+
           <button
             class="checkout-button"
             type="button"
+            [disabled]="
+              selectedProductCount === 0
+            "
+            (click)="checkout()"
           >
+
             Checkout
+
+            @if (
+              selectedProductCount > 0
+            ) {
+
+              ({{
+                selectedProductCount
+              }})
+
+            }
+
           </button>
 
-        </aside>
+        </div>
 
       </div>
 

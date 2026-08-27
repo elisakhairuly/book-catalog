@@ -2,6 +2,7 @@
 
   <div class="navbar-inner">
 
+
     <!-- =========================
          BRAND
     ========================== -->
@@ -9,6 +10,7 @@
     <a
       class="brand"
       routerLink="/home"
+      (click)="closeMobileMenu()"
     >
 
       <span class="brand-mark">
@@ -23,19 +25,95 @@
 
 
     <!-- =========================
-         NAVIGATION
+         DESKTOP SEARCH
     ========================== -->
 
-    <nav class="nav-links">
+    <form
+      class="navbar-search desktop-search"
+      (ngSubmit)="searchProducts()"
+    >
+
+      <svg
+        class="search-svg"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+
+        <circle
+          cx="11"
+          cy="11"
+          r="6.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        />
+
+        <path
+          d="M16 16l4 4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+
+      </svg>
+
+
+      <input
+        type="text"
+        name="search"
+        placeholder="Cari produk..."
+        [(ngModel)]="searchKeyword"
+        (input)="searchProductsLive()"
+        autocomplete="off"
+      >
+
+
+      @if (searchKeyword) {
+
+        <button
+          class="clear-search"
+          type="button"
+          aria-label="Hapus pencarian"
+          (click)="clearSearch()"
+        >
+          ×
+        </button>
+
+      }
+
+
+      <button
+        class="search-submit"
+        type="submit"
+      >
+        Cari
+      </button>
+
+    </form>
+
+
+    <!-- =========================
+         DESKTOP NAVIGATION
+    ========================== -->
+
+    <nav class="nav-links desktop-navigation">
+
+
+      <!-- HOME -->
 
       <a
         routerLink="/home"
         routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
+        [routerLinkActiveOptions]="{
+          exact: true
+        }"
       >
         Home
       </a>
 
+
+      <!-- PRODUCTS -->
 
       <a
         routerLink="/book"
@@ -49,31 +127,1121 @@
            CART
       ========================== -->
 
-      <a
-        class="cart-link"
-        routerLink="/cart"
-        routerLinkActive="active"
-      >
+      <div class="cart-wrapper">
 
-        <span class="cart-icon">
-          🛒
-        </span>
 
-        <span>
-          Cart
-        </span>
+        <button
+          class="cart-link"
+          type="button"
+          [class.active]="showMiniCart"
+          (click)="toggleMiniCart($event)"
+        >
 
-        @if (totalItems() > 0) {
+          <svg
+            class="cart-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
 
-          <span class="cart-count">
-            {{ totalItems() }}
+            <path
+              d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 7H7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <circle
+              cx="10"
+              cy="19"
+              r="1.4"
+              fill="currentColor"
+            />
+
+            <circle
+              cx="17"
+              cy="19"
+              r="1.4"
+              fill="currentColor"
+            />
+
+          </svg>
+
+
+          <span class="cart-text">
+            Cart
           </span>
+
+
+          @if (totalItems() > 0) {
+
+            <span class="cart-count">
+              {{ totalItems() }}
+            </span>
+
+          }
+
+        </button>
+
+
+        <!-- =========================
+             MINI CART DESKTOP
+        ========================== -->
+
+        @if (showMiniCart) {
+
+          <div class="mini-cart">
+
+
+            <div class="mini-cart-header">
+
+              <div>
+
+                <span class="mini-cart-label">
+                  SHOPPING CART
+                </span>
+
+                <h3>
+                  Keranjang Saya
+                </h3>
+
+              </div>
+
+
+              <span class="mini-cart-total-item">
+                {{ totalItems() }} item
+              </span>
+
+            </div>
+
+
+            @if (cartItems().length === 0) {
+
+              <div class="mini-cart-empty">
+
+                <div class="mini-empty-icon">
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+
+                    <path
+                      d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 7H7"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+
+                    <circle
+                      cx="10"
+                      cy="19"
+                      r="1.3"
+                      fill="currentColor"
+                    />
+
+                    <circle
+                      cx="17"
+                      cy="19"
+                      r="1.3"
+                      fill="currentColor"
+                    />
+
+                  </svg>
+
+                </div>
+
+
+                <strong>
+                  Keranjang masih kosong
+                </strong>
+
+                <p>
+                  Tambahkan produk yang kamu suka.
+                </p>
+
+              </div>
+
+            }
+
+            @else {
+
+              <div class="mini-cart-items">
+
+                @for (
+                  item of cartItems();
+                  track item.id
+                ) {
+
+                  <div class="mini-cart-item">
+
+
+                    <a
+                      class="mini-item-image"
+                      [routerLink]="[
+                        '/book',
+                        item.id
+                      ]"
+                      (click)="closeMiniCart()"
+                    >
+
+                      <img
+                        [src]="item.thumbnail"
+                        [alt]="item.title"
+                      >
+
+                    </a>
+
+
+                    <div class="mini-item-info">
+
+                      <a
+                        class="mini-item-title"
+                        [routerLink]="[
+                          '/book',
+                          item.id
+                        ]"
+                        (click)="closeMiniCart()"
+                      >
+                        {{ item.title }}
+                      </a>
+
+
+                      <span class="mini-item-price">
+                        ${{ item.price }}
+                      </span>
+
+
+                      <div class="mini-item-actions">
+
+                        <div class="mini-quantity">
+
+                          <button
+                            type="button"
+                            aria-label="Kurangi jumlah"
+                            (click)="decreaseQuantity(item.id)"
+                          >
+                            −
+                          </button>
+
+
+                          <span>
+                            {{ item.quantity }}
+                          </span>
+
+
+                          <button
+                            type="button"
+                            aria-label="Tambah jumlah"
+                            (click)="increaseQuantity(item.id)"
+                          >
+                            +
+                          </button>
+
+                        </div>
+
+
+                        <button
+                          class="mini-delete"
+                          type="button"
+                          aria-label="Hapus produk"
+                          (click)="removeCartItem(item.id)"
+                        >
+
+                          <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+
+                            <path
+                              d="M5 7h14"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                              stroke-linecap="round"
+                            />
+
+                            <path
+                              d="M9 7V5h6v2"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                            />
+
+                            <path
+                              d="M8 10v7M12 10v7M16 10v7"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                            />
+
+                            <path
+                              d="M7 7l1 13h8l1-13"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                              stroke-linejoin="round"
+                            />
+
+                          </svg>
+
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                }
+
+              </div>
+
+
+              <div class="mini-cart-summary">
+
+                <div class="mini-summary-row">
+
+                  <span>
+                    Total Item
+                  </span>
+
+                  <strong>
+                    {{ totalItems() }}
+                  </strong>
+
+                </div>
+
+
+                <div class="mini-summary-row total">
+
+                  <span>
+                    Subtotal
+                  </span>
+
+                  <strong>
+                    ${{ totalPrice().toFixed(2) }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div class="mini-cart-footer">
+
+                <button
+                  class="view-cart-button"
+                  type="button"
+                  (click)="openCartPage()"
+                >
+                  Lihat Keranjang
+                </button>
+
+
+                <button
+                  class="mini-checkout-button"
+                  type="button"
+                  (click)="checkout()"
+                >
+                  Checkout
+                  ({{ totalItems() }})
+                </button>
+
+              </div>
+
+            }
+
+          </div>
 
         }
 
-      </a>
+      </div>
+
+
+      <!-- =========================
+           NOT LOGGED IN
+      ========================== -->
+
+      @if (!isLoggedIn()) {
+
+        <a
+          class="login-link"
+          routerLink="/login"
+          routerLinkActive="active"
+        >
+          Login
+        </a>
+
+
+        <a
+          class="register-link"
+          routerLink="/register"
+          routerLinkActive="active"
+        >
+          Register
+        </a>
+
+      }
+
+
+      <!-- =========================
+           LOGGED IN
+      ========================== -->
+
+      @else {
+
+        <div class="user-area">
+
+          <div class="user-info">
+
+            <span class="user-avatar">
+
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+
+                <circle
+                  cx="12"
+                  cy="8"
+                  r="3.3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  d="M5.5 19c.7-4 3-6 6.5-6s5.8 2 6.5 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+              </svg>
+
+            </span>
+
+
+            <div class="user-copy">
+
+              <span class="user-label">
+                Halo,
+              </span>
+
+              <span class="user-name">
+                {{ currentUser()?.name || 'User' }}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="logout-button"
+            type="button"
+            (click)="logout()"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+
+              <path
+                d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+
+              <path
+                d="M14 8l4 4-4 4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+
+              <path
+                d="M9 12h9"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+
+            </svg>
+
+            <span class="logout-text">
+              Logout
+            </span>
+
+          </button>
+
+        </div>
+
+      }
 
     </nav>
+
+
+    <!-- =====================================================
+         MOBILE ACTIONS
+    ====================================================== -->
+
+    <div class="mobile-navigation-area">
+
+
+      <!-- =========================
+           MOBILE CART
+      ========================== -->
+
+      <div class="cart-wrapper mobile-cart-wrapper">
+
+        <button
+          class="mobile-cart-button"
+          type="button"
+          [class.active]="showMiniCart"
+          (click)="toggleMiniCart($event)"
+          aria-label="Keranjang"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 7H7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <circle
+              cx="10"
+              cy="19"
+              r="1.4"
+              fill="currentColor"
+            />
+
+            <circle
+              cx="17"
+              cy="19"
+              r="1.4"
+              fill="currentColor"
+            />
+
+          </svg>
+
+
+          @if (totalItems() > 0) {
+
+            <span class="mobile-cart-count">
+              {{ totalItems() }}
+            </span>
+
+          }
+
+        </button>
+
+
+        <!-- =========================
+             MINI CART MOBILE
+        ========================== -->
+
+        @if (showMiniCart) {
+
+          <div class="mini-cart mobile-mini-cart">
+
+
+            <div class="mini-cart-header">
+
+              <div>
+
+                <span class="mini-cart-label">
+                  SHOPPING CART
+                </span>
+
+                <h3>
+                  Keranjang Saya
+                </h3>
+
+              </div>
+
+
+              <span class="mini-cart-total-item">
+                {{ totalItems() }} item
+              </span>
+
+            </div>
+
+
+            @if (cartItems().length === 0) {
+
+              <div class="mini-cart-empty">
+
+                <div class="mini-empty-icon">
+
+                  <svg
+                    viewBox="0 0 24 24"
+                  >
+
+                    <path
+                      d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 7H7"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+
+                    <circle
+                      cx="10"
+                      cy="19"
+                      r="1.3"
+                      fill="currentColor"
+                    />
+
+                    <circle
+                      cx="17"
+                      cy="19"
+                      r="1.3"
+                      fill="currentColor"
+                    />
+
+                  </svg>
+
+                </div>
+
+                <strong>
+                  Keranjang masih kosong
+                </strong>
+
+                <p>
+                  Tambahkan produk yang kamu suka.
+                </p>
+
+              </div>
+
+            }
+
+            @else {
+
+              <div class="mini-cart-items">
+
+                @for (
+                  item of cartItems();
+                  track item.id
+                ) {
+
+                  <div class="mini-cart-item">
+
+                    <a
+                      class="mini-item-image"
+                      [routerLink]="[
+                        '/book',
+                        item.id
+                      ]"
+                      (click)="closeMiniCart()"
+                    >
+
+                      <img
+                        [src]="item.thumbnail"
+                        [alt]="item.title"
+                      >
+
+                    </a>
+
+
+                    <div class="mini-item-info">
+
+                      <a
+                        class="mini-item-title"
+                        [routerLink]="[
+                          '/book',
+                          item.id
+                        ]"
+                        (click)="closeMiniCart()"
+                      >
+                        {{ item.title }}
+                      </a>
+
+
+                      <span class="mini-item-price">
+                        ${{ item.price }}
+                      </span>
+
+
+                      <div class="mini-item-actions">
+
+                        <div class="mini-quantity">
+
+                          <button
+                            type="button"
+                            (click)="decreaseQuantity(item.id)"
+                          >
+                            −
+                          </button>
+
+                          <span>
+                            {{ item.quantity }}
+                          </span>
+
+                          <button
+                            type="button"
+                            (click)="increaseQuantity(item.id)"
+                          >
+                            +
+                          </button>
+
+                        </div>
+
+
+                        <button
+                          class="mini-delete"
+                          type="button"
+                          (click)="removeCartItem(item.id)"
+                        >
+
+                          <svg
+                            viewBox="0 0 24 24"
+                          >
+
+                            <path
+                              d="M5 7h14"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                              stroke-linecap="round"
+                            />
+
+                            <path
+                              d="M9 7V5h6v2"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                            />
+
+                            <path
+                              d="M8 10v7M12 10v7M16 10v7"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                            />
+
+                            <path
+                              d="M7 7l1 13h8l1-13"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                              stroke-linejoin="round"
+                            />
+
+                          </svg>
+
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                }
+
+              </div>
+
+
+              <div class="mini-cart-summary">
+
+                <div class="mini-summary-row">
+
+                  <span>
+                    Total Item
+                  </span>
+
+                  <strong>
+                    {{ totalItems() }}
+                  </strong>
+
+                </div>
+
+
+                <div class="mini-summary-row total">
+
+                  <span>
+                    Subtotal
+                  </span>
+
+                  <strong>
+                    ${{ totalPrice().toFixed(2) }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <div class="mini-cart-footer">
+
+                <button
+                  class="view-cart-button"
+                  type="button"
+                  (click)="openCartPage()"
+                >
+                  Lihat Keranjang
+                </button>
+
+
+                <button
+                  class="mini-checkout-button"
+                  type="button"
+                  (click)="checkout()"
+                >
+                  Checkout
+                  ({{ totalItems() }})
+                </button>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- =========================
+           HAMBURGER
+      ========================== -->
+
+      <button
+        class="menu-toggle"
+        type="button"
+        [class.active]="showMobileMenu"
+        (click)="toggleMobileMenu($event)"
+        aria-label="Buka menu"
+      >
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </button>
+
+
+      <!-- =========================
+           MOBILE MENU
+      ========================== -->
+
+      @if (showMobileMenu) {
+
+        <div
+          class="mobile-menu"
+          (click)="$event.stopPropagation()"
+        >
+
+
+          <!-- MOBILE SEARCH -->
+
+          <form
+            class="mobile-search"
+            (ngSubmit)="searchProducts()"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+
+              <circle
+                cx="11"
+                cy="11"
+                r="6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+
+              <path
+                d="M16 16l4 4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+
+            </svg>
+
+
+            <input
+              type="text"
+              name="mobileSearch"
+              placeholder="Cari produk..."
+              [(ngModel)]="searchKeyword"
+              (input)="searchProductsLive()"
+              autocomplete="off"
+            >
+
+
+            @if (searchKeyword) {
+
+              <button
+                class="mobile-clear-search"
+                type="button"
+                (click)="clearSearch()"
+              >
+                ×
+              </button>
+
+            }
+
+
+            <button
+              class="mobile-search-submit"
+              type="submit"
+            >
+              Cari
+            </button>
+
+          </form>
+
+
+          <!-- MOBILE LINKS -->
+
+          <div class="mobile-menu-links">
+
+            <a
+              routerLink="/home"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{
+                exact: true
+              }"
+              (click)="closeMobileMenu()"
+            >
+
+              <svg
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M4 10.5L12 4l8 6.5V20h-5v-6H9v6H4z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linejoin="round"
+                />
+              </svg>
+
+              <span>
+                Home
+              </span>
+
+            </a>
+
+
+            <a
+              routerLink="/book"
+              routerLinkActive="active"
+              (click)="closeMobileMenu()"
+            >
+
+              <svg
+                viewBox="0 0 24 24"
+              >
+                <rect
+                  x="4"
+                  y="4"
+                  width="6"
+                  height="6"
+                  rx="1"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+
+                <rect
+                  x="14"
+                  y="4"
+                  width="6"
+                  height="6"
+                  rx="1"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+
+                <rect
+                  x="4"
+                  y="14"
+                  width="6"
+                  height="6"
+                  rx="1"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+
+                <rect
+                  x="14"
+                  y="14"
+                  width="6"
+                  height="6"
+                  rx="1"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+              </svg>
+
+              <span>
+                Products
+              </span>
+
+            </a>
+
+          </div>
+
+
+          <!-- =========================
+               MOBILE AUTH
+          ========================== -->
+
+          <div class="mobile-account">
+
+
+            @if (!isLoggedIn()) {
+
+              <a
+                class="mobile-login"
+                routerLink="/login"
+                (click)="closeMobileMenu()"
+              >
+                Login
+              </a>
+
+
+              <a
+                class="mobile-register"
+                routerLink="/register"
+                (click)="closeMobileMenu()"
+              >
+                Register
+              </a>
+
+            }
+
+            @else {
+
+              <div class="mobile-user">
+
+                <span class="mobile-user-avatar">
+
+                  <svg
+                    viewBox="0 0 24 24"
+                  >
+
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="3.3"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    />
+
+                    <path
+                      d="M5.5 19c.7-4 3-6 6.5-6s5.8 2 6.5 6"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+
+                  </svg>
+
+                </span>
+
+
+                <div class="mobile-user-copy">
+
+                  <span>
+                    Login sebagai
+                  </span>
+
+                  <strong>
+                    {{ currentUser()?.name || 'User' }}
+                  </strong>
+
+                </div>
+
+              </div>
+
+
+              <button
+                class="mobile-logout"
+                type="button"
+                (click)="logout()"
+              >
+
+                <svg
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+
+                  <path
+                    d="M14 8l4 4-4 4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+
+                  <path
+                    d="M9 12h9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+
+                </svg>
+
+                Logout
+
+              </button>
+
+            }
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
 
   </div>
 

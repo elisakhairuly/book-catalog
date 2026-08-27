@@ -1,13 +1,26 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
+
 import { BookCard } from '../../components/book-card/book-card';
+
 import { BookService } from '../../services/book';
+
 import { ProductStateService } from '../../services/product-state';
+
 
 @Component({
   selector: 'app-book-list',
-  imports: [BookCard],
+
+  imports: [
+    BookCard
+  ],
+
   templateUrl: './book-list.html',
+
   styleUrl: './book-list.css'
 })
 export class BookList {
@@ -32,6 +45,25 @@ export class BookList {
   searchKeyword = '';
 
   selectedCategory = '';
+
+  selectedSort = '';
+
+  selectedRating = 0;
+
+
+  // =========================
+  // MOBILE FILTER
+  // =========================
+
+  isFilterOpen = false;
+
+
+  // =========================
+  // VIEW MODE
+  // =========================
+
+  viewMode: 'grid' | 'list' =
+    'grid';
 
 
   // =========================
@@ -77,94 +109,106 @@ export class BookList {
     this.errorMessage = '';
 
 
-    // =========================
-    // GET PRODUCTS
-    // =========================
+    this.bookService
+      .getBooks()
+      .subscribe({
 
-    this.bookService.getBooks().subscribe({
+        next: (data: any) => {
 
-      next: (data: any) => {
-
-        this.allBooks = data.products;
-
-
-        // =========================
-        // PRODUCT STATE
-        // =========================
-
-        this.productState.setProducts(
-          data.products
-        );
+          this.allBooks =
+            data.products || [];
 
 
-        // =========================
-        // GET CATEGORIES
-        // =========================
+          // =========================
+          // PRODUCT STATE
+          // =========================
 
-        this.categories = Array.from(
-          new Set(
-            data.products.map(
+          this.productState.setProducts(
+            this.allBooks
+          );
+
+
+          // =========================
+          // GET CATEGORIES
+          // =========================
+
+          const categoryList: string[] =
+            this.allBooks.map(
               (book: any) =>
-                book.category as string
+                String(
+                  book.category || ''
+                )
+            );
+
+
+          this.categories =
+            Array.from(
+              new Set<string>(
+                categoryList
+              )
             )
-          )
-        );
-
-
-        // =========================
-        // READ QUERY PARAMS
-        // =========================
-
-        this.route.queryParams.subscribe(params => {
-
-          this.searchKeyword =
-            (params['search'] || '').toLowerCase();
-
-          this.selectedCategory =
-            params['category'] || '';
+              .filter(
+                category =>
+                  category.trim() !== ''
+              )
+              .sort(
+                (a, b) =>
+                  a.localeCompare(b)
+              );
 
 
           // =========================
-          // APPLY FILTER
+          // READ QUERY PARAMS
           // =========================
 
-          this.applyFilters();
+          this.route.queryParams
+            .subscribe(params => {
 
-        });
-
-
-        this.isLoading = false;
-
-      },
-
-
-      error: () => {
-
-        this.isLoading = false;
-
-        this.errorMessage =
-          'Gagal mengambil data produk. Silakan coba lagi.';
-
-      }
-
-    });
-
-  }
+              this.searchKeyword =
+                String(
+                  params['search'] || ''
+                )
+                  .toLowerCase();
 
 
-  // =========================
-  // SEARCH
-  // =========================
-
-  searchBooks(event: Event) {
-
-    this.searchKeyword =
-      (
-        event.target as HTMLInputElement
-      ).value.toLowerCase();
+              this.selectedCategory =
+                String(
+                  params['category'] || ''
+                );
 
 
-    this.updateQueryParams();
+              this.selectedSort =
+                String(
+                  params['sort'] || ''
+                );
+
+
+              this.selectedRating =
+                Number(
+                  params['rating'] || 0
+                );
+
+
+              this.applyFilters();
+
+            });
+
+
+          this.isLoading = false;
+
+        },
+
+
+        error: () => {
+
+          this.isLoading = false;
+
+          this.errorMessage =
+            'Gagal mengambil data produk. Silakan coba lagi.';
+
+        }
+
+      });
 
   }
 
@@ -173,12 +217,12 @@ export class BookList {
   // CATEGORY
   // =========================
 
-  filterByCategory(event: Event) {
+  selectCategory(
+    category: string
+  ) {
 
     this.selectedCategory =
-      (
-        event.target as HTMLSelectElement
-      ).value;
+      category;
 
 
     this.updateQueryParams();
@@ -187,22 +231,160 @@ export class BookList {
 
 
   // =========================
-  // UPDATE QUERY PARAMETERS
+  // SORT
+  // =========================
+
+  selectSort(
+    sort: string
+  ) {
+
+    this.selectedSort =
+      sort;
+
+
+    this.updateQueryParams();
+
+  }
+
+
+  // =========================
+  // RATING FILTER
+  // =========================
+
+  changeRating(
+    event: Event
+  ) {
+
+    this.selectedRating =
+      Number(
+        (
+          event.target as
+          HTMLSelectElement
+        ).value
+      );
+
+
+    this.updateQueryParams();
+
+  }
+
+
+  // =========================
+  // VIEW MODE
+  // =========================
+
+  setViewMode(
+    mode: 'grid' | 'list'
+  ) {
+
+    this.viewMode =
+      mode;
+
+  }
+
+
+  // =========================
+  // OPEN FILTER
+  // =========================
+
+  openFilter() {
+
+    this.isFilterOpen =
+      true;
+
+  }
+
+
+  // =========================
+  // CLOSE FILTER
+  // =========================
+
+  closeFilter() {
+
+    this.isFilterOpen =
+      false;
+
+  }
+
+
+  // =========================
+  // TOGGLE FILTER
+  // =========================
+
+  toggleFilter() {
+
+    this.isFilterOpen =
+      !this.isFilterOpen;
+
+  }
+
+
+  // =========================
+  // ACTIVE FILTER COUNT
+  // =========================
+
+  get activeFilterCount():
+    number {
+
+    let count = 0;
+
+
+    if (
+      this.selectedCategory
+    ) {
+
+      count++;
+
+    }
+
+
+    if (
+      this.selectedSort
+    ) {
+
+      count++;
+
+    }
+
+
+    if (
+      this.selectedRating > 0
+    ) {
+
+      count++;
+
+    }
+
+
+    return count;
+
+  }
+
+
+  // =========================
+  // UPDATE QUERY PARAMS
   // =========================
 
   private updateQueryParams() {
 
     const queryParams: {
+
       search?: string;
+
       category?: string;
+
+      sort?: string;
+
+      rating?: number;
+
     } = {};
 
 
-    // =========================
     // SEARCH
-    // =========================
 
-    if (this.searchKeyword.trim()) {
+    if (
+      this.searchKeyword.trim()
+    ) {
 
       queryParams.search =
         this.searchKeyword.trim();
@@ -210,11 +392,11 @@ export class BookList {
     }
 
 
-    // =========================
     // CATEGORY
-    // =========================
 
-    if (this.selectedCategory) {
+    if (
+      this.selectedCategory
+    ) {
 
       queryParams.category =
         this.selectedCategory;
@@ -222,15 +404,39 @@ export class BookList {
     }
 
 
-    // =========================
-    // UPDATE URL
-    // =========================
+    // SORT
+
+    if (
+      this.selectedSort
+    ) {
+
+      queryParams.sort =
+        this.selectedSort;
+
+    }
+
+
+    // RATING
+
+    if (
+      this.selectedRating > 0
+    ) {
+
+      queryParams.rating =
+        this.selectedRating;
+
+    }
+
 
     this.router.navigate(
       [],
       {
-        relativeTo: this.route,
-        queryParams: queryParams
+
+        relativeTo:
+          this.route,
+
+        queryParams
+
       }
     );
 
@@ -238,67 +444,164 @@ export class BookList {
 
 
   // =========================
-  // FILTER DATA
+  // APPLY FILTER
   // =========================
 
   applyFilters() {
 
-    this.filteredBooks =
-      this.allBooks.filter((book: any) => {
+    let result =
+      this.allBooks.filter(
+        (book: any) => {
 
-        const title =
-          String(book.title || '').toLowerCase();
+          const title =
+            String(
+              book.title || ''
+            )
+              .toLowerCase();
 
 
-        const category =
-          String(book.category || '');
+          const category =
+            String(
+              book.category || ''
+            );
 
 
-        // =========================
-        // SEARCH MATCH
-        // =========================
+          const rating =
+            Number(
+              book.rating || 0
+            );
 
-        const matchesSearch =
-          title.includes(
-            this.searchKeyword
+
+          const matchesSearch =
+            title.includes(
+              this.searchKeyword
+            );
+
+
+          const matchesCategory =
+            !this.selectedCategory ||
+            category ===
+              this.selectedCategory;
+
+
+          const matchesRating =
+            rating >=
+              this.selectedRating;
+
+
+          return (
+            matchesSearch &&
+            matchesCategory &&
+            matchesRating
           );
 
-
-        // =========================
-        // CATEGORY MATCH
-        // =========================
-
-        const matchesCategory =
-          !this.selectedCategory ||
-          category === this.selectedCategory;
+        }
+      );
 
 
-        return (
-          matchesSearch &&
-          matchesCategory
+    // =========================
+    // COPY BEFORE SORT
+    // =========================
+
+    result =
+      [...result];
+
+
+    // =========================
+    // SORT
+    // =========================
+
+    switch (
+      this.selectedSort
+    ) {
+
+      case 'newest':
+
+        result.sort(
+          (
+            a: any,
+            b: any
+          ) =>
+            Number(b.id) -
+            Number(a.id)
         );
 
-      });
+        break;
 
 
-    // =========================
-    // TOTAL RESULT
-    // =========================
+      case 'price-asc':
+
+        result.sort(
+          (
+            a: any,
+            b: any
+          ) =>
+            Number(a.price) -
+            Number(b.price)
+        );
+
+        break;
+
+
+      case 'price-desc':
+
+        result.sort(
+          (
+            a: any,
+            b: any
+          ) =>
+            Number(b.price) -
+            Number(a.price)
+        );
+
+        break;
+
+
+      case 'rating-desc':
+
+        result.sort(
+          (
+            a: any,
+            b: any
+          ) =>
+            Number(b.rating) -
+            Number(a.rating)
+        );
+
+        break;
+
+
+      case 'discount-desc':
+
+        result.sort(
+          (
+            a: any,
+            b: any
+          ) =>
+            Number(
+              b.discountPercentage
+            ) -
+            Number(
+              a.discountPercentage
+            )
+        );
+
+        break;
+
+    }
+
+
+    this.filteredBooks =
+      result;
+
 
     this.totalItems =
       this.filteredBooks.length;
 
 
-    // =========================
-    // RESET PAGE
-    // =========================
+    this.currentPage =
+      1;
 
-    this.currentPage = 1;
-
-
-    // =========================
-    // UPDATE PAGE
-    // =========================
 
     this.updatePage();
 
@@ -306,18 +609,21 @@ export class BookList {
 
 
   // =========================
-  // UPDATE CURRENT PAGE
+  // UPDATE PAGE
   // =========================
 
   updatePage() {
 
     const start =
-      (this.currentPage - 1) *
+      (
+        this.currentPage - 1
+      ) *
       this.pageSize;
 
 
     const end =
-      start + this.pageSize;
+      start +
+      this.pageSize;
 
 
     this.books =
@@ -333,7 +639,8 @@ export class BookList {
   // TOTAL PAGES
   // =========================
 
-  get totalPages(): number {
+  get totalPages():
+    number {
 
     return Math.ceil(
       this.totalItems /
@@ -347,13 +654,20 @@ export class BookList {
   // PAGE NUMBERS
   // =========================
 
-  get pageNumbers(): number[] {
+  get pageNumbers():
+    number[] {
 
     return Array.from(
       {
-        length: this.totalPages
+        length:
+          this.totalPages
       },
-      (_, index) => index + 1
+
+      (
+        _,
+        index
+      ) =>
+        index + 1
     );
 
   }
@@ -363,15 +677,22 @@ export class BookList {
   // START ITEM
   // =========================
 
-  get startItem(): number {
+  get startItem():
+    number {
 
-    if (this.totalItems === 0) {
+    if (
+      this.totalItems === 0
+    ) {
+
       return 0;
+
     }
 
 
     return (
-      (this.currentPage - 1) *
+      (
+        this.currentPage - 1
+      ) *
       this.pageSize
     ) + 1;
 
@@ -382,12 +703,16 @@ export class BookList {
   // END ITEM
   // =========================
 
-  get endItem(): number {
+  get endItem():
+    number {
 
     return Math.min(
+
       this.currentPage *
-      this.pageSize,
+        this.pageSize,
+
       this.totalItems
+
     );
 
   }
@@ -397,34 +722,41 @@ export class BookList {
   // CHANGE PAGE
   // =========================
 
-  changePage(page: number) {
+  changePage(
+    page: number
+  ) {
 
     if (
       page < 1 ||
       page > this.totalPages
     ) {
+
       return;
+
     }
 
 
-    this.currentPage = page;
+    this.currentPage =
+      page;
 
 
     this.updatePage();
 
 
-    // Scroll ke atas
-
     window.scrollTo({
+
       top: 0,
-      behavior: 'smooth'
+
+      behavior:
+        'smooth'
+
     });
 
   }
 
 
   // =========================
-  // RESET
+  // RESET FILTER
   // =========================
 
   resetFilters() {
@@ -433,16 +765,22 @@ export class BookList {
 
     this.selectedCategory = '';
 
+    this.selectedSort = '';
+
+    this.selectedRating = 0;
+
     this.currentPage = 1;
 
-
-    // Hapus query params
 
     this.router.navigate(
       [],
       {
-        relativeTo: this.route,
+
+        relativeTo:
+          this.route,
+
         queryParams: {}
+
       }
     );
 

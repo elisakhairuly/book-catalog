@@ -1,139 +1,255 @@
 <div class="home-page">
 
-  <!-- HERO -->
 
-  <section class="home-hero">
+  <!-- =========================
+       SEARCH RESULTS
+  ========================== -->
 
-    <div class="hero-copy">
+  @if (searchKeyword) {
 
-      <span class="eyebrow">
-        PRODUCT CATALOG
-      </span>
-
-      <h1>
-        Discover<br>
-        <em>what you need.</em>
-      </h1>
-
-      <p>
-        Explore our collection, discover popular products,
-        and find something worth adding to your collection.
-      </p>
-
-      <a
-        class="hero-button"
-        routerLink="/book"
-      >
-        Explore Products
-        <span>→</span>
-      </a>
-
-    </div>
+    <section class="home-search-section">
 
 
-    @if (featuredBooks.length > 0) {
+      <!-- HEADER -->
 
-      <div class="featured-book">
+      <div class="search-heading">
 
-        <div class="featured-label">
-          FEATURED
-        </div>
+        <div>
 
-        <img
-          [src]="featuredBooks[0].thumbnail"
-          [alt]="featuredBooks[0].title"
-        >
-
-        <div class="featured-info">
-
-          <span>
-            {{ featuredBooks[0].category }}
+          <span class="eyebrow">
+            SEARCH RESULTS
           </span>
 
+          <h2>
+            Hasil pencarian "{{ searchKeyword }}"
+          </h2>
+
+        </div>
+
+
+        <span class="search-count">
+
+          {{ searchResults.length }}
+          produk ditemukan
+
+        </span>
+
+      </div>
+
+
+      <!-- =========================
+           RESULT
+      ========================== -->
+
+      @if (searchResults.length > 0) {
+
+        <div class="search-grid">
+
+          @for (
+            book of searchResults;
+            track book.id
+          ) {
+
+            <app-book-card
+              [book]="book"
+            ></app-book-card>
+
+          }
+
+        </div>
+
+      }
+
+
+      <!-- =========================
+           EMPTY SEARCH
+      ========================== -->
+
+      @else if (!isLoading) {
+
+        <div class="search-empty">
+
+          <div class="search-empty-icon">
+            ⌕
+          </div>
+
           <h3>
-            {{ featuredBooks[0].title }}
+            Produk tidak ditemukan
           </h3>
 
           <p>
-            ⭐ {{ featuredBooks[0].rating }}
+            Tidak ada produk yang cocok dengan
+            "{{ searchKeyword }}".
           </p>
 
         </div>
 
-      </div>
-
-    }
-
-  </section>
+      }
 
 
-  <!-- FEATURED PRODUCTS -->
+    </section>
 
-  <section class="collection-section">
+  }
 
-    <div class="section-heading">
 
-      <div>
+  <!-- =========================
+       NORMAL HOME
+  ========================== -->
+
+  @else {
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <section class="home-hero">
+
+      <div class="hero-copy">
 
         <span class="eyebrow">
-          DISCOVER
+          PRODUCT CATALOG
         </span>
 
-        <h2>
-          Featured Products
-        </h2>
+        <h1>
+          Discover<br>
+          <em>what you need.</em>
+        </h1>
+
+        <p>
+          Explore our collection, discover popular products,
+          and find something worth adding to your collection.
+        </p>
+
+        <a
+          class="hero-button"
+          routerLink="/book"
+        >
+          Explore Products
+
+          <span>
+            →
+          </span>
+        </a>
 
       </div>
 
-      <a
-        routerLink="/book"
-        class="view-all"
-      >
-        View all
-        <span>→</span>
-      </a>
 
-    </div>
+      <!-- FEATURED PRODUCT -->
 
+      @if (featuredBooks.length > 0) {
 
-    <div class="featured-grid">
+        <div class="featured-book">
 
-      @for (
-        book of featuredBooks;
-        track book.id
-      ) {
+          <div class="featured-label">
+            FEATURED
+          </div>
 
-        <app-book-card
-          [book]="book"
-        ></app-book-card>
+          <img
+            [src]="featuredBooks[0].thumbnail"
+            [alt]="featuredBooks[0].title"
+          >
+
+          <div class="featured-info">
+
+            <span>
+              {{ featuredBooks[0].category }}
+            </span>
+
+            <h3>
+              {{ featuredBooks[0].title }}
+            </h3>
+
+            <p>
+              ⭐ {{ featuredBooks[0].rating }}
+            </p>
+
+          </div>
+
+        </div>
 
       }
 
-    </div>
-
-  </section>
+    </section>
 
 
-  <!-- STATEMENT -->
+    <!-- =========================
+         FEATURED PRODUCTS
+    ========================== -->
 
-  <section class="statement">
+    <section class="collection-section">
 
-    <span class="eyebrow">
-      FIND SOMETHING NEW
-    </span>
+      <div class="section-heading">
 
-    <h2>
-      There's always something<br>
-      worth discovering.
-    </h2>
+        <div>
 
-    <a
-      routerLink="/book"
-      class="statement-link"
-    >
-      Browse all products →
-    </a>
+          <span class="eyebrow">
+            DISCOVER
+          </span>
 
-  </section>
+          <h2>
+            Featured Products
+          </h2>
+
+        </div>
+
+
+        <a
+          routerLink="/book"
+          class="view-all"
+        >
+          View all
+
+          <span>
+            →
+          </span>
+        </a>
+
+      </div>
+
+
+      <div class="featured-grid">
+
+        @for (
+          book of featuredBooks;
+          track book.id
+        ) {
+
+          <app-book-card
+            [book]="book"
+          ></app-book-card>
+
+        }
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         STATEMENT
+    ========================== -->
+
+    <section class="statement">
+
+      <span class="eyebrow">
+        FIND SOMETHING NEW
+      </span>
+
+      <h2>
+        There's always something<br>
+        worth discovering.
+      </h2>
+
+      <a
+        routerLink="/book"
+        class="statement-link"
+      >
+        Browse all products →
+      </a>
+
+    </section>
+
+  }
 
 </div>

@@ -1,4 +1,14 @@
-import { Injectable, signal, computed } from '@angular/core';
+import {
+  Injectable,
+  computed,
+  effect,
+  signal
+} from '@angular/core';
+
+import {
+  AuthStateService
+} from './auth-state';
+
 
 @Injectable({
   providedIn: 'root'
@@ -6,67 +16,410 @@ import { Injectable, signal, computed } from '@angular/core';
 export class CartStateService {
 
   // =========================
-  // STORAGE KEY
+  // CURRENT USER KEY
   // =========================
 
-  private readonly storageKey = 'product-cart';
+  private currentUserKey = '';
 
 
   // =========================
   // CART DATA
   // =========================
 
-  cartItems = signal<any[]>(
-    this.loadCart()
-  );
+  cartItems = signal<any[]>([]);
 
 
   // =========================
+  // SELECTED PRODUCT IDS
+  // =========================
+
+  selectedProductIds =
+    signal<number[]>([]);
+
+
+  // =========================
+  // CONSTRUCTOR
+  // =========================
+
+  constructor(
+    private authState:
+      AuthStateService
+  ) {
+
+    // =========================
+    // WATCH CURRENT USER
+    // =========================
+
+    effect(() => {
+
+      const user =
+        this.authState.currentUser();
+
+
+      const newUserKey =
+        this.getUserKey(user);
+
+
+      // Jika user tidak berubah
+      // tidak perlu load ulang
+
+      if (
+        newUserKey ===
+        this.currentUserKey
+      ) {
+
+        return;
+
+      }
+
+
+      this.currentUserKey =
+        newUserKey;
+
+
+      // =========================
+      // LOGGED OUT
+      // =========================
+
+      if (!newUserKey) {
+
+        this.cartItems.set([]);
+
+        this.selectedProductIds
+          .set([]);
+
+        return;
+
+      }
+
+
+      // =========================
+      // LOAD USER CART
+      // =========================
+
+      this.cartItems.set(
+        this.loadCart()
+      );
+
+
+      // =========================
+      // LOAD USER SELECTION
+      // =========================
+
+      this.selectedProductIds.set(
+        this.loadSelection()
+      );
+
+
+      // Hapus selection yang
+      // produknya sudah tidak ada
+
+      this.cleanSelection();
+
+    });
+
+  }
+
+
+  // =========================================================
+  // USER KEY
+  // =========================================================
+
+  private getUserKey(
+    user: any
+  ): string {
+
+    if (!user) {
+
+      return '';
+
+    }
+
+
+    const identity =
+      String(
+        user.email ||
+        user.username ||
+        user.name ||
+        ''
+      )
+        .trim()
+        .toLowerCase();
+
+
+    if (!identity) {
+
+      return '';
+
+    }
+
+
+    // Supaya aman digunakan
+    // sebagai localStorage key
+
+    return identity
+      .replace(
+        /[^a-z0-9@._-]/g,
+        '-'
+      );
+
+  }
+
+
+  // =========================================================
+  // STORAGE KEYS
+  // =========================================================
+
+  private get cartStorageKey():
+    string {
+
+    return (
+      'product-cart-' +
+      this.currentUserKey
+    );
+
+  }
+
+
+  private get selectionStorageKey():
+    string {
+
+    return (
+      'product-cart-selection-' +
+      this.currentUserKey
+    );
+
+  }
+
+
+  // =========================================================
   // TOTAL ITEMS
-  // =========================
+  // =========================================================
 
   totalItems = computed(() => {
 
-    return this.cartItems().reduce(
-      (total, item) => total + item.quantity,
-      0
-    );
+    return this.cartItems()
+      .reduce(
+        (
+          total,
+          item
+        ) => {
+
+          return (
+            total +
+            Number(
+              item.quantity || 0
+            )
+          );
+
+        },
+        0
+      );
 
   });
 
 
-  // =========================
+  // =========================================================
   // TOTAL PRICE
-  // =========================
+  // =========================================================
 
   totalPrice = computed(() => {
 
-    return this.cartItems().reduce(
-      (total, item) =>
-        total + (item.price * item.quantity),
-      0
-    );
+    return this.cartItems()
+      .reduce(
+        (
+          total,
+          item
+        ) => {
+
+          return (
+            total +
+            (
+              Number(
+                item.price || 0
+              ) *
+              Number(
+                item.quantity || 0
+              )
+            )
+          );
+
+        },
+        0
+      );
 
   });
 
 
-  // =========================
-  // LOAD CART FROM STORAGE
-  // =========================
+  // =========================================================
+  // SELECTED ITEMS
+  // =========================================================
 
-  private loadCart(): any[] {
+  selectedItems = computed(() => {
+
+    const selected =
+      new Set(
+        this.selectedProductIds()
+      );
+
+
+    return this.cartItems()
+      .filter(
+        item =>
+          selected.has(
+            item.id
+          )
+      );
+
+  });
+
+
+  // =========================================================
+  // SELECTED PRODUCT COUNT
+  // =========================================================
+
+  selectedProductCount =
+    computed(() => {
+
+      return this.selectedItems()
+        .length;
+
+    });
+
+
+  // =========================================================
+  // SELECTED ITEM / QUANTITY COUNT
+  // =========================================================
+
+  selectedCount =
+    computed(() => {
+
+      return this.selectedItems()
+        .reduce(
+          (
+            total,
+            item
+          ) => {
+
+            return (
+              total +
+              Number(
+                item.quantity || 0
+              )
+            );
+
+          },
+          0
+        );
+
+    });
+
+
+  // =========================================================
+  // SELECTED TOTAL
+  // =========================================================
+
+  selectedTotal =
+    computed(() => {
+
+      return this.selectedItems()
+        .reduce(
+          (
+            total,
+            item
+          ) => {
+
+            return (
+              total +
+              (
+                Number(
+                  item.price || 0
+                ) *
+                Number(
+                  item.quantity || 0
+                )
+              )
+            );
+
+          },
+          0
+        );
+
+    });
+
+
+  // =========================================================
+  // ALL SELECTED
+  // =========================================================
+
+  isAllSelected =
+    computed(() => {
+
+      const items =
+        this.cartItems();
+
+
+      if (
+        items.length === 0
+      ) {
+
+        return false;
+
+      }
+
+
+      const selected =
+        new Set(
+          this.selectedProductIds()
+        );
+
+
+      return items.every(
+        item =>
+          selected.has(
+            item.id
+          )
+      );
+
+    });
+
+
+  // =========================================================
+  // LOAD CART
+  // =========================================================
+
+  private loadCart():
+    any[] {
+
+    if (
+      !this.currentUserKey
+    ) {
+
+      return [];
+
+    }
+
 
     const savedCart =
-      localStorage.getItem(this.storageKey);
+      localStorage.getItem(
+        this.cartStorageKey
+      );
+
 
     if (!savedCart) {
+
       return [];
+
     }
+
 
     try {
 
       const cart =
-        JSON.parse(savedCart);
+        JSON.parse(
+          savedCart
+        );
+
 
       return Array.isArray(cart)
         ? cart
@@ -81,159 +434,513 @@ export class CartStateService {
   }
 
 
-  // =========================
-  // SAVE CART TO STORAGE
-  // =========================
+  // =========================================================
+  // SAVE CART
+  // =========================================================
 
-  private saveCart(): void {
+  private saveCart():
+    void {
+
+    if (
+      !this.currentUserKey
+    ) {
+
+      return;
+
+    }
+
 
     localStorage.setItem(
-      this.storageKey,
-      JSON.stringify(this.cartItems())
+      this.cartStorageKey,
+      JSON.stringify(
+        this.cartItems()
+      )
     );
 
   }
 
 
-  // =========================
-  // ADD TO CART
-  // =========================
+  // =========================================================
+  // LOAD SELECTION
+  // =========================================================
 
-  addToCart(product: any) {
+  private loadSelection():
+    number[] {
+
+    if (
+      !this.currentUserKey
+    ) {
+
+      return [];
+
+    }
+
+
+    const savedSelection =
+      localStorage.getItem(
+        this.selectionStorageKey
+      );
+
+
+    if (!savedSelection) {
+
+      return [];
+
+    }
+
+
+    try {
+
+      const selection =
+        JSON.parse(
+          savedSelection
+        );
+
+
+      if (
+        !Array.isArray(
+          selection
+        )
+      ) {
+
+        return [];
+
+      }
+
+
+      return selection
+        .map(
+          id =>
+            Number(id)
+        )
+        .filter(
+          id =>
+            !Number.isNaN(id)
+        );
+
+    } catch {
+
+      return [];
+
+    }
+
+  }
+
+
+  // =========================================================
+  // SAVE SELECTION
+  // =========================================================
+
+  private saveSelection():
+    void {
+
+    if (
+      !this.currentUserKey
+    ) {
+
+      return;
+
+    }
+
+
+    localStorage.setItem(
+      this.selectionStorageKey,
+      JSON.stringify(
+        this.selectedProductIds()
+      )
+    );
+
+  }
+
+
+  // =========================================================
+  // CLEAN SELECTION
+  // =========================================================
+
+  private cleanSelection() {
+
+    const availableIds =
+      new Set(
+        this.cartItems()
+          .map(
+            item =>
+              Number(item.id)
+          )
+      );
+
+
+    const cleaned =
+      this.selectedProductIds()
+        .filter(
+          id =>
+            availableIds.has(id)
+        );
+
+
+    this.selectedProductIds
+      .set(cleaned);
+
+
+    this.saveSelection();
+
+  }
+
+
+  // =========================================================
+  // ADD TO CART
+  // =========================================================
+
+  addToCart(
+    product: any
+  ) {
+
+    if (
+      !product
+    ) {
+
+      return;
+
+    }
+
 
     const currentItems =
       this.cartItems();
 
+
     const existingItem =
       currentItems.find(
-        item => item.id === product.id
+        item =>
+          item.id === product.id
       );
 
+
+    // =========================
+    // ALREADY EXISTS
+    // =========================
 
     if (existingItem) {
 
       this.cartItems.set(
-        currentItems.map(item =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1
-              }
-            : item
+
+        currentItems.map(
+          item =>
+
+            item.id ===
+            product.id
+
+              ? {
+                  ...item,
+
+                  quantity:
+                    Number(
+                      item.quantity
+                    ) + 1
+                }
+
+              : item
         )
+
       );
 
-    } else {
+    }
+
+
+    // =========================
+    // NEW PRODUCT
+    // =========================
+
+    else {
 
       this.cartItems.set([
+
         ...currentItems,
+
         {
           ...product,
+
           quantity: 1
         }
+
       ]);
 
     }
 
 
-    // Simpan perubahan
-
     this.saveCart();
 
   }
 
 
-  // =========================
+  // =========================================================
   // REMOVE FROM CART
-  // =========================
+  // =========================================================
 
-  removeFromCart(productId: number) {
-
-    this.cartItems.set(
-      this.cartItems().filter(
-        item => item.id !== productId
-      )
-    );
-
-
-    // Simpan perubahan
-
-    this.saveCart();
-
-  }
-
-
-  // =========================
-  // INCREASE QUANTITY
-  // =========================
-
-  increaseQuantity(productId: number) {
+  removeFromCart(
+    productId: number
+  ) {
 
     this.cartItems.set(
-      this.cartItems().map(item =>
-        item.id === productId
-          ? {
-              ...item,
-              quantity: item.quantity + 1
-            }
-          : item
-      )
-    );
 
-
-    // Simpan perubahan
-
-    this.saveCart();
-
-  }
-
-
-  // =========================
-  // DECREASE QUANTITY
-  // =========================
-
-  decreaseQuantity(productId: number) {
-
-    const currentItems =
-      this.cartItems();
-
-
-    this.cartItems.set(
-      currentItems
-        .map(item =>
-          item.id === productId
-            ? {
-                ...item,
-                quantity: item.quantity - 1
-              }
-            : item
-        )
+      this.cartItems()
         .filter(
-          item => item.quantity > 0
+          item =>
+            item.id !==
+            productId
         )
+
     );
 
 
-    // Simpan perubahan
+    // Hapus juga selection
+
+    this.selectedProductIds.set(
+
+      this.selectedProductIds()
+        .filter(
+          id =>
+            id !== productId
+        )
+
+    );
+
+
+    this.saveCart();
+
+    this.saveSelection();
+
+  }
+
+
+  // =========================================================
+  // INCREASE QUANTITY
+  // =========================================================
+
+  increaseQuantity(
+    productId: number
+  ) {
+
+    this.cartItems.set(
+
+      this.cartItems()
+        .map(
+          item =>
+
+            item.id ===
+            productId
+
+              ? {
+                  ...item,
+
+                  quantity:
+                    Number(
+                      item.quantity
+                    ) + 1
+                }
+
+              : item
+        )
+
+    );
+
 
     this.saveCart();
 
   }
 
 
-  // =========================
+  // =========================================================
+  // DECREASE QUANTITY
+  // =========================================================
+
+  decreaseQuantity(
+    productId: number
+  ) {
+
+    this.cartItems.set(
+
+      this.cartItems()
+
+        .map(
+          item =>
+
+            item.id ===
+            productId
+
+              ? {
+                  ...item,
+
+                  quantity:
+                    Number(
+                      item.quantity
+                    ) - 1
+                }
+
+              : item
+        )
+
+        .filter(
+          item =>
+            Number(
+              item.quantity
+            ) > 0
+        )
+
+    );
+
+
+    // Jika quantity menjadi 0
+    // produk otomatis hilang,
+    // jadi selection juga dibersihkan
+
+    this.cleanSelection();
+
+
+    this.saveCart();
+
+  }
+
+
+  // =========================================================
+  // TOGGLE PRODUCT SELECTION
+  // =========================================================
+
+  toggleProductSelection(
+    productId: number
+  ) {
+
+    const selected =
+      new Set(
+        this.selectedProductIds()
+      );
+
+
+    if (
+      selected.has(productId)
+    ) {
+
+      selected.delete(
+        productId
+      );
+
+    } else {
+
+      selected.add(
+        productId
+      );
+
+    }
+
+
+    this.selectedProductIds.set(
+      Array.from(selected)
+    );
+
+
+    this.saveSelection();
+
+  }
+
+
+  // =========================================================
+  // IS PRODUCT SELECTED
+  // =========================================================
+
+  isSelected(
+    productId: number
+  ): boolean {
+
+    return this.selectedProductIds()
+      .includes(
+        productId
+      );
+
+  }
+
+
+  // =========================================================
+  // TOGGLE SELECT ALL
+  // =========================================================
+
+  toggleSelectAll() {
+
+    if (
+      this.isAllSelected()
+    ) {
+
+      this.selectedProductIds
+        .set([]);
+
+    } else {
+
+      this.selectedProductIds.set(
+
+        this.cartItems()
+          .map(
+            item =>
+              item.id
+          )
+
+      );
+
+    }
+
+
+    this.saveSelection();
+
+  }
+
+
+  // =========================================================
+  // CLEAR SELECTION
+  // =========================================================
+
+  clearSelection() {
+
+    this.selectedProductIds
+      .set([]);
+
+
+    if (
+      this.currentUserKey
+    ) {
+
+      localStorage.removeItem(
+        this.selectionStorageKey
+      );
+
+    }
+
+  }
+
+
+  // =========================================================
   // CLEAR CART
-  // =========================
+  // =========================================================
 
   clearCart() {
 
     this.cartItems.set([]);
 
+    this.selectedProductIds
+      .set([]);
 
-    // Hapus data dari storage
+
+    if (
+      !this.currentUserKey
+    ) {
+
+      return;
+
+    }
+
 
     localStorage.removeItem(
-      this.storageKey
+      this.cartStorageKey
+    );
+
+
+    localStorage.removeItem(
+      this.selectionStorageKey
     );
 
   }

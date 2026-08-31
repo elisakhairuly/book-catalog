@@ -1,5 +1,6 @@
 import {
   Component,
+  HostListener,
   OnInit
 } from '@angular/core';
 
@@ -115,6 +116,9 @@ export class Checkout
 
   ngOnInit() {
 
+    this.isProcessingPayment =
+      false;
+
     const payment =
       this.route.snapshot
         .queryParamMap
@@ -150,6 +154,23 @@ export class Checkout
         true;
 
     }
+
+  }
+
+  // =========================================================
+  // HANDLE BROWSER BACK / FORWARD
+  // =========================================================
+
+  @HostListener(
+    'window:pageshow',
+    ['$event']
+  )
+  onPageShow(
+    event: PageTransitionEvent
+  ) {
+
+    this.isProcessingPayment =
+      false;
 
   }
 

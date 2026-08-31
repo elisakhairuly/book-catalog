@@ -1,11 +1,19 @@
 import { Routes } from '@angular/router';
 
 import { Home } from './pages/home/home';
+
 import { BookList } from './pages/book-list/book-list';
+
 import { BookDetail } from './pages/book-detail/book-detail';
+
 import { Cart } from './pages/cart/cart';
+
+import { Checkout } from './pages/checkout/checkout';
+
 import { Register } from './pages/register/register';
+
 import { Login } from './pages/login/login';
+
 import { NotFound } from './pages/not-found/not-found';
 
 import { authGuard } from './guards/auth-guard';
@@ -50,6 +58,17 @@ export const routes: Routes = [
   {
     path: 'cart',
     component: Cart,
+    canActivate: [authGuard]
+  },
+
+
+  // =========================
+  // CHECKOUT - LOGIN REQUIRED
+  // =========================
+
+  {
+    path: 'checkout',
+    component: Checkout,
     canActivate: [authGuard]
   },
 

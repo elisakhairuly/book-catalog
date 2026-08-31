@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import {
+  Component
+} from '@angular/core';
 
 import {
+  Router,
   RouterLink
 } from '@angular/router';
 
@@ -16,11 +19,14 @@ import {
     RouterLink
   ],
 
-  templateUrl: './cart.html',
+  templateUrl:
+    './cart.html',
 
-  styleUrl: './cart.css'
+  styleUrl:
+    './cart.css'
 })
 export class Cart {
+
 
   // =========================
   // CONSTRUCTOR
@@ -28,7 +34,10 @@ export class Cart {
 
   constructor(
     private cartState:
-      CartStateService
+      CartStateService,
+
+    private router:
+      Router
   ) {}
 
 
@@ -70,7 +79,6 @@ export class Cart {
 
   // =========================================================
   // SELECTED PRODUCT COUNT
-  // Jumlah jenis produk yang dicentang
   // =========================================================
 
   get selectedProductCount():
@@ -84,7 +92,6 @@ export class Cart {
 
   // =========================================================
   // SELECTED QUANTITY
-  // Total quantity dari produk yang dicentang
   // =========================================================
 
   get selectedCount():
@@ -97,7 +104,7 @@ export class Cart {
 
 
   // =========================================================
-  // SELECTED TOTAL PRICE
+  // SELECTED TOTAL
   // =========================================================
 
   get selectedTotal():
@@ -245,6 +252,10 @@ export class Cart {
 
   checkout() {
 
+    // =========================
+    // NOTHING SELECTED
+    // =========================
+
     if (
       this.selectedProductCount === 0
     ) {
@@ -276,21 +287,16 @@ export class Cart {
 
 
     // =========================
-    // TEMPORARY CHECKOUT DATA
+    // TEMPORARY BACKUP
     // =========================
 
     sessionStorage.setItem(
       'checkout-data',
-
       JSON.stringify(
         checkoutData
       )
     );
 
-
-    // =========================
-    // TEMPORARY TEST
-    // =========================
 
     console.log(
       'Checkout Data:',
@@ -299,15 +305,14 @@ export class Cart {
 
 
     // =========================
-    // NANTI DIAKTIFKAN
-    // SAAT CHECKOUT FINAL
+    // OPEN CHECKOUT PAGE
     // =========================
 
-    /*
     this.router.navigate(
-      ['/checkout']
+      [
+        '/checkout'
+      ]
     );
-    */
 
   }
 

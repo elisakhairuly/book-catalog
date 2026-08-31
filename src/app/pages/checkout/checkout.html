@@ -1,0 +1,639 @@
+<section class="checkout-page">
+
+  <div class="checkout-container">
+
+
+    <!-- =====================================================
+         BREADCRUMB
+    ====================================================== -->
+
+    <div class="checkout-breadcrumb">
+
+      <a routerLink="/home">
+        Home
+      </a>
+
+      <span>
+        /
+      </span>
+
+      <a routerLink="/cart">
+        Cart
+      </a>
+
+      <span>
+        /
+      </span>
+
+      <strong>
+        Checkout
+      </strong>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="checkout-header">
+
+      <div>
+
+        <span class="checkout-label">
+          CHECKOUT
+        </span>
+
+        <h1>
+          Selesaikan Pesanan
+        </h1>
+
+        <p>
+          Periksa kembali produk yang dipilih dan
+          lengkapi informasi pengiriman sebelum
+          melanjutkan ke pembayaran.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EMPTY CHECKOUT
+    ====================================================== -->
+
+    @if (selectedItems.length === 0) {
+
+      <div class="empty-checkout">
+
+        <div class="empty-icon">
+
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+
+            <path
+              d="M3 4h2l2.1 9.1a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6L20 7H7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+
+            <circle
+              cx="10"
+              cy="19"
+              r="1.3"
+              fill="currentColor"
+            />
+
+            <circle
+              cx="17"
+              cy="19"
+              r="1.3"
+              fill="currentColor"
+            />
+
+          </svg>
+
+        </div>
+
+
+        <h2>
+          Belum ada produk yang dipilih
+        </h2>
+
+
+        <p>
+          Kembali ke keranjang dan pilih produk
+          yang ingin kamu checkout.
+        </p>
+
+
+        <button
+          type="button"
+          (click)="backToCart()"
+        >
+          Kembali ke Keranjang
+        </button>
+
+      </div>
+
+    }
+
+
+    <!-- =====================================================
+         CHECKOUT CONTENT
+    ====================================================== -->
+
+    @else {
+
+      <div class="checkout-layout">
+
+
+        <!-- =================================================
+             LEFT
+        ================================================== -->
+
+        <div class="checkout-main">
+
+
+          <!-- ===============================================
+               SHIPPING
+          ================================================ -->
+
+          <section class="checkout-card">
+
+            <div class="card-heading">
+
+              <div class="heading-number">
+                1
+              </div>
+
+
+              <div>
+
+                <h2>
+                  Informasi Pengiriman
+                </h2>
+
+                <p>
+                  Masukkan data penerima pesanan.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="checkout-form">
+
+
+              <!-- NAME -->
+
+              <div class="form-group full">
+
+                <label for="receiverName">
+                  Nama Penerima
+                </label>
+
+
+                <input
+                  id="receiverName"
+                  type="text"
+                  name="receiverName"
+                  placeholder="Masukkan nama lengkap"
+                  [(ngModel)]="receiverName"
+                  autocomplete="name"
+                >
+
+              </div>
+
+
+              <!-- PHONE -->
+
+              <div class="form-group full">
+
+                <label for="phone">
+                  Nomor Telepon
+                </label>
+
+
+                <input
+                  id="phone"
+                  type="tel"
+                  name="phone"
+                  placeholder="Contoh: 081234567890"
+                  [(ngModel)]="phone"
+                  autocomplete="tel"
+                >
+
+              </div>
+
+
+              <!-- ADDRESS -->
+
+              <div class="form-group full">
+
+                <label for="address">
+                  Alamat Lengkap
+                </label>
+
+
+                <textarea
+                  id="address"
+                  name="address"
+                  rows="4"
+                  placeholder="Nama jalan, nomor rumah, kecamatan, dan detail lainnya"
+                  [(ngModel)]="address"
+                  autocomplete="street-address"
+                ></textarea>
+
+              </div>
+
+
+              <!-- CITY -->
+
+              <div class="form-group">
+
+                <label for="city">
+                  Kota / Kabupaten
+                </label>
+
+
+                <input
+                  id="city"
+                  type="text"
+                  name="city"
+                  placeholder="Kota / Kabupaten"
+                  [(ngModel)]="city"
+                  autocomplete="address-level2"
+                >
+
+              </div>
+
+
+              <!-- POSTAL CODE -->
+
+              <div class="form-group">
+
+                <label for="postalCode">
+                  Kode Pos
+                </label>
+
+
+                <input
+                  id="postalCode"
+                  type="text"
+                  name="postalCode"
+                  placeholder="Kode pos"
+                  [(ngModel)]="postalCode"
+                  autocomplete="postal-code"
+                >
+
+              </div>
+
+            </div>
+
+          </section>
+
+
+          <!-- ===============================================
+               PRODUCTS
+          ================================================ -->
+
+          <section class="checkout-card">
+
+            <div class="card-heading">
+
+              <div class="heading-number">
+                2
+              </div>
+
+
+              <div>
+
+                <h2>
+                  Produk Pesanan
+                </h2>
+
+                <p>
+                  {{ totalSelectedItems }}
+                  item akan diproses.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="checkout-products">
+
+              @for (
+                item of selectedItems;
+                track item.id
+              ) {
+
+                <div class="checkout-product">
+
+
+                  <!-- PRODUCT IMAGE -->
+
+                  <a
+                    class="product-image"
+                    [routerLink]="[
+                      '/book',
+                      item.id
+                    ]"
+                  >
+
+                    <img
+                      [src]="item.thumbnail"
+                      [alt]="item.title"
+                    >
+
+                  </a>
+
+
+                  <!-- PRODUCT INFO -->
+
+                  <div class="product-information">
+
+                    <a
+                      class="product-name"
+                      [routerLink]="[
+                        '/book',
+                        item.id
+                      ]"
+                    >
+                      {{ item.title }}
+                    </a>
+
+
+                    @if (item.brand) {
+
+                      <span class="product-brand">
+                        {{ item.brand }}
+                      </span>
+
+                    }
+
+
+                    <div class="product-meta">
+
+                      <span>
+                        ${{ item.price }}
+                      </span>
+
+                      <span class="meta-divider">
+                        ×
+                      </span>
+
+                      <span>
+                        {{ item.quantity }}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+
+                  <!-- PRODUCT TOTAL -->
+
+                  <strong class="product-total">
+
+                    ${{
+                      (
+                        item.price *
+                        item.quantity
+                      ).toFixed(2)
+                    }}
+
+                  </strong>
+
+                </div>
+
+              }
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="checkout-sidebar">
+
+          <div class="summary-card">
+
+
+            <span class="summary-label">
+              ORDER SUMMARY
+            </span>
+
+
+            <h2>
+              Ringkasan Pesanan
+            </h2>
+
+
+            <div class="summary-divider">
+            </div>
+
+
+            <!-- PRODUCT COUNT -->
+
+            <div class="summary-row">
+
+              <span>
+                Produk
+              </span>
+
+              <strong>
+                {{ totalSelectedItems }}
+                item
+              </strong>
+
+            </div>
+
+
+            <!-- SUBTOTAL -->
+
+            <div class="summary-row">
+
+              <span>
+                Subtotal
+              </span>
+
+              <strong>
+                ${{ subtotal.toFixed(2) }}
+              </strong>
+
+            </div>
+
+
+            <!-- SHIPPING -->
+
+            <div class="summary-row">
+
+              <span>
+                Pengiriman
+              </span>
+
+              <strong class="free-shipping">
+                Gratis
+              </strong>
+
+            </div>
+
+
+            <div class="summary-divider">
+            </div>
+
+
+            <!-- GRAND TOTAL -->
+
+            <div class="summary-total">
+
+              <span>
+                Total Pembayaran
+              </span>
+
+              <strong>
+                ${{ grandTotal.toFixed(2) }}
+              </strong>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            @if (formError) {
+
+              <div class="checkout-error">
+
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                  />
+
+                  <path
+                    d="M12 7.5v5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+
+                  <circle
+                    cx="12"
+                    cy="16.5"
+                    r="1"
+                    fill="currentColor"
+                  />
+
+                </svg>
+
+
+                <span>
+                  {{ formError }}
+                </span>
+
+              </div>
+
+            }
+
+
+            <!-- PAYMENT BUTTON -->
+
+            <button
+              class="payment-button"
+              type="button"
+              (click)="continuePayment()"
+            >
+
+              Lanjut ke Pembayaran
+
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+
+                <path
+                  d="M5 12h13"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+
+                <path
+                  d="M14 8l4 4-4 4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+
+              </svg>
+
+            </button>
+
+
+            <!-- BACK CART -->
+
+            <button
+              class="back-cart-button"
+              type="button"
+              (click)="backToCart()"
+            >
+              Kembali ke Keranjang
+            </button>
+
+
+            <!-- PAYMENT NOTE -->
+
+            <div class="payment-note">
+
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+
+                <path
+                  d="M7 10V8a5 5 0 0 1 10 0v2"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                />
+
+                <rect
+                  x="5"
+                  y="10"
+                  width="14"
+                  height="10"
+                  rx="2"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                />
+
+              </svg>
+
+
+              <span>
+                Pembayaran akan diproses
+                menggunakan Xendit Test Mode.
+              </span>
+
+            </div>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+    }
+
+  </div>
+
+</section>

@@ -9,7 +9,6 @@ import {
   AuthStateService
 } from './auth-state';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -21,13 +20,11 @@ export class CartStateService {
 
   private currentUserKey = '';
 
-
   // =========================
   // CART DATA
   // =========================
 
   cartItems = signal<any[]>([]);
-
 
   // =========================
   // SELECTED PRODUCT IDS
@@ -35,7 +32,6 @@ export class CartStateService {
 
   selectedProductIds =
     signal<number[]>([]);
-
 
   // =========================
   // CONSTRUCTOR
@@ -46,40 +42,23 @@ export class CartStateService {
       AuthStateService
   ) {
 
-    // =========================
-    // WATCH CURRENT USER
-    // =========================
-
     effect(() => {
 
       const user =
         this.authState.currentUser();
 
-
       const newUserKey =
         this.getUserKey(user);
-
-
-      // Jika user tidak berubah
-      // tidak perlu load ulang
 
       if (
         newUserKey ===
         this.currentUserKey
       ) {
-
         return;
-
       }
-
 
       this.currentUserKey =
         newUserKey;
-
-
-      // =========================
-      // LOGGED OUT
-      // =========================
 
       if (!newUserKey) {
 
@@ -89,37 +68,21 @@ export class CartStateService {
           .set([]);
 
         return;
-
       }
-
-
-      // =========================
-      // LOAD USER CART
-      // =========================
 
       this.cartItems.set(
         this.loadCart()
       );
 
-
-      // =========================
-      // LOAD USER SELECTION
-      // =========================
-
       this.selectedProductIds.set(
         this.loadSelection()
       );
-
-
-      // Hapus selection yang
-      // produknya sudah tidak ada
 
       this.cleanSelection();
 
     });
 
   }
-
 
   // =========================================================
   // USER KEY
@@ -130,11 +93,8 @@ export class CartStateService {
   ): string {
 
     if (!user) {
-
       return '';
-
     }
-
 
     const identity =
       String(
@@ -146,25 +106,15 @@ export class CartStateService {
         .trim()
         .toLowerCase();
 
-
     if (!identity) {
-
       return '';
-
     }
 
-
-    // Supaya aman digunakan
-    // sebagai localStorage key
-
-    return identity
-      .replace(
-        /[^a-z0-9@._-]/g,
-        '-'
-      );
-
+    return identity.replace(
+      /[^a-z0-9@._-]/g,
+      '-'
+    );
   }
-
 
   // =========================================================
   // STORAGE KEYS
@@ -177,9 +127,7 @@ export class CartStateService {
       'product-cart-' +
       this.currentUserKey
     );
-
   }
-
 
   private get selectionStorageKey():
     string {
@@ -188,9 +136,7 @@ export class CartStateService {
       'product-cart-selection-' +
       this.currentUserKey
     );
-
   }
-
 
   // =========================================================
   // TOTAL ITEMS
@@ -217,7 +163,6 @@ export class CartStateService {
       );
 
   });
-
 
   // =========================================================
   // TOTAL PRICE
@@ -250,7 +195,6 @@ export class CartStateService {
 
   });
 
-
   // =========================================================
   // SELECTED ITEMS
   // =========================================================
@@ -262,7 +206,6 @@ export class CartStateService {
         this.selectedProductIds()
       );
 
-
     return this.cartItems()
       .filter(
         item =>
@@ -272,7 +215,6 @@ export class CartStateService {
       );
 
   });
-
 
   // =========================================================
   // SELECTED PRODUCT COUNT
@@ -286,9 +228,8 @@ export class CartStateService {
 
     });
 
-
   // =========================================================
-  // SELECTED ITEM / QUANTITY COUNT
+  // SELECTED ITEM COUNT
   // =========================================================
 
   selectedCount =
@@ -313,7 +254,6 @@ export class CartStateService {
         );
 
     });
-
 
   // =========================================================
   // SELECTED TOTAL
@@ -347,7 +287,6 @@ export class CartStateService {
 
     });
 
-
   // =========================================================
   // ALL SELECTED
   // =========================================================
@@ -358,21 +297,16 @@ export class CartStateService {
       const items =
         this.cartItems();
 
-
       if (
         items.length === 0
       ) {
-
         return false;
-
       }
-
 
       const selected =
         new Set(
           this.selectedProductIds()
         );
-
 
       return items.every(
         item =>
@@ -382,7 +316,6 @@ export class CartStateService {
       );
 
     });
-
 
   // =========================================================
   // LOAD CART
@@ -394,24 +327,17 @@ export class CartStateService {
     if (
       !this.currentUserKey
     ) {
-
       return [];
-
     }
-
 
     const savedCart =
       localStorage.getItem(
         this.cartStorageKey
       );
 
-
     if (!savedCart) {
-
       return [];
-
     }
-
 
     try {
 
@@ -419,7 +345,6 @@ export class CartStateService {
         JSON.parse(
           savedCart
         );
-
 
       return Array.isArray(cart)
         ? cart
@@ -430,9 +355,7 @@ export class CartStateService {
       return [];
 
     }
-
   }
-
 
   // =========================================================
   // SAVE CART
@@ -444,11 +367,8 @@ export class CartStateService {
     if (
       !this.currentUserKey
     ) {
-
       return;
-
     }
-
 
     localStorage.setItem(
       this.cartStorageKey,
@@ -456,9 +376,7 @@ export class CartStateService {
         this.cartItems()
       )
     );
-
   }
-
 
   // =========================================================
   // LOAD SELECTION
@@ -470,24 +388,17 @@ export class CartStateService {
     if (
       !this.currentUserKey
     ) {
-
       return [];
-
     }
-
 
     const savedSelection =
       localStorage.getItem(
         this.selectionStorageKey
       );
 
-
     if (!savedSelection) {
-
       return [];
-
     }
-
 
     try {
 
@@ -496,17 +407,13 @@ export class CartStateService {
           savedSelection
         );
 
-
       if (
         !Array.isArray(
           selection
         )
       ) {
-
         return [];
-
       }
-
 
       return selection
         .map(
@@ -523,9 +430,7 @@ export class CartStateService {
       return [];
 
     }
-
   }
-
 
   // =========================================================
   // SAVE SELECTION
@@ -537,11 +442,8 @@ export class CartStateService {
     if (
       !this.currentUserKey
     ) {
-
       return;
-
     }
-
 
     localStorage.setItem(
       this.selectionStorageKey,
@@ -549,9 +451,7 @@ export class CartStateService {
         this.selectedProductIds()
       )
     );
-
   }
-
 
   // =========================================================
   // CLEAN SELECTION
@@ -568,7 +468,6 @@ export class CartStateService {
           )
       );
 
-
     const cleaned =
       this.selectedProductIds()
         .filter(
@@ -576,15 +475,12 @@ export class CartStateService {
             availableIds.has(id)
         );
 
-
     this.selectedProductIds
       .set(cleaned);
-
 
     this.saveSelection();
 
   }
-
 
   // =========================================================
   // ADD TO CART
@@ -594,29 +490,18 @@ export class CartStateService {
     product: any
   ) {
 
-    if (
-      !product
-    ) {
-
+    if (!product) {
       return;
-
     }
-
 
     const currentItems =
       this.cartItems();
-
 
     const existingItem =
       currentItems.find(
         item =>
           item.id === product.id
       );
-
-
-    // =========================
-    // ALREADY EXISTS
-    // =========================
 
     if (existingItem) {
 
@@ -642,14 +527,7 @@ export class CartStateService {
 
       );
 
-    }
-
-
-    // =========================
-    // NEW PRODUCT
-    // =========================
-
-    else {
+    } else {
 
       this.cartItems.set([
 
@@ -657,7 +535,6 @@ export class CartStateService {
 
         {
           ...product,
-
           quantity: 1
         }
 
@@ -665,11 +542,9 @@ export class CartStateService {
 
     }
 
-
     this.saveCart();
 
   }
-
 
   // =========================================================
   // REMOVE FROM CART
@@ -690,9 +565,6 @@ export class CartStateService {
 
     );
 
-
-    // Hapus juga selection
-
     this.selectedProductIds.set(
 
       this.selectedProductIds()
@@ -703,13 +575,64 @@ export class CartStateService {
 
     );
 
-
     this.saveCart();
 
     this.saveSelection();
 
   }
 
+  // =========================================================
+  // REMOVE PURCHASED ITEMS
+  // =========================================================
+
+  removePurchasedItems(
+    productIds: number[]
+  ) {
+
+    if (
+      !Array.isArray(productIds) ||
+      productIds.length === 0
+    ) {
+      return;
+    }
+
+    const purchasedIds =
+      new Set(
+        productIds.map(
+          id =>
+            Number(id)
+        )
+      );
+
+    this.cartItems.set(
+
+      this.cartItems()
+        .filter(
+          item =>
+            !purchasedIds.has(
+              Number(item.id)
+            )
+        )
+
+    );
+
+    this.selectedProductIds.set(
+
+      this.selectedProductIds()
+        .filter(
+          id =>
+            !purchasedIds.has(
+              Number(id)
+            )
+        )
+
+    );
+
+    this.saveCart();
+
+    this.saveSelection();
+
+  }
 
   // =========================================================
   // INCREASE QUANTITY
@@ -742,11 +665,9 @@ export class CartStateService {
 
     );
 
-
     this.saveCart();
 
   }
-
 
   // =========================================================
   // DECREASE QUANTITY
@@ -787,18 +708,11 @@ export class CartStateService {
 
     );
 
-
-    // Jika quantity menjadi 0
-    // produk otomatis hilang,
-    // jadi selection juga dibersihkan
-
     this.cleanSelection();
-
 
     this.saveCart();
 
   }
-
 
   // =========================================================
   // TOGGLE PRODUCT SELECTION
@@ -812,7 +726,6 @@ export class CartStateService {
       new Set(
         this.selectedProductIds()
       );
-
 
     if (
       selected.has(productId)
@@ -830,16 +743,13 @@ export class CartStateService {
 
     }
 
-
     this.selectedProductIds.set(
       Array.from(selected)
     );
 
-
     this.saveSelection();
 
   }
-
 
   // =========================================================
   // IS PRODUCT SELECTED
@@ -855,7 +765,6 @@ export class CartStateService {
       );
 
   }
-
 
   // =========================================================
   // TOGGLE SELECT ALL
@@ -884,11 +793,9 @@ export class CartStateService {
 
     }
 
-
     this.saveSelection();
 
   }
-
 
   // =========================================================
   // CLEAR SELECTION
@@ -898,7 +805,6 @@ export class CartStateService {
 
     this.selectedProductIds
       .set([]);
-
 
     if (
       this.currentUserKey
@@ -912,7 +818,6 @@ export class CartStateService {
 
   }
 
-
   // =========================================================
   // CLEAR CART
   // =========================================================
@@ -924,20 +829,15 @@ export class CartStateService {
     this.selectedProductIds
       .set([]);
 
-
     if (
       !this.currentUserKey
     ) {
-
       return;
-
     }
-
 
     localStorage.removeItem(
       this.cartStorageKey
     );
-
 
     localStorage.removeItem(
       this.selectionStorageKey

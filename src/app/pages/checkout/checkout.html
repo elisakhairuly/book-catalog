@@ -2,7 +2,6 @@
 
   <div class="checkout-container">
 
-
     <!-- =====================================================
          BREADCRUMB
     ====================================================== -->
@@ -13,17 +12,13 @@
         Home
       </a>
 
-      <span>
-        /
-      </span>
+      <span>/</span>
 
       <a routerLink="/cart">
         Cart
       </a>
 
-      <span>
-        /
-      </span>
+      <span>/</span>
 
       <strong>
         Checkout
@@ -69,16 +64,13 @@
 
         </div>
 
-
         <span class="checkout-label">
           PAYMENT VERIFICATION
         </span>
 
-
         <h1>
           Memverifikasi Pembayaran
         </h1>
-
 
         <p>
           Mohon tunggu sebentar.
@@ -128,23 +120,19 @@
 
         </div>
 
-
         <span class="checkout-label">
           PAYMENT SUCCESS
         </span>
 
-
         <h1>
           Pembayaran Berhasil
         </h1>
-
 
         <p>
           Pembayaran pesanan berhasil diverifikasi.
           Produk yang telah dibayar sudah dihapus
           dari keranjang.
         </p>
-
 
         <div class="payment-result-detail">
 
@@ -160,7 +148,6 @@
 
           </div>
 
-
           <div>
 
             <span>
@@ -173,7 +160,6 @@
             </strong>
 
           </div>
-
 
           <div>
 
@@ -188,7 +174,6 @@
           </div>
 
         </div>
-
 
         <div class="payment-result-actions">
 
@@ -226,7 +211,6 @@
 
           </button>
 
-
           <button
             class="back-cart-button"
             type="button"
@@ -250,7 +234,7 @@
 
       <div class="payment-result-card">
 
-        <div class="payment-result-icon">
+        <div class="payment-result-icon cancelled">
 
           <svg
             viewBox="0 0 24 24"
@@ -278,23 +262,19 @@
 
         </div>
 
-
-        <span class="checkout-label">
+        <span class="checkout-label cancelled-label">
           PAYMENT CANCELLED
         </span>
-
 
         <h1>
           Pembayaran Dibatalkan
         </h1>
 
-
         <p>
           Pembayaran belum selesai.
-          Produk masih tersimpan di keranjang
+          Produk tetap tersimpan di keranjang
           dan dapat dibayar kembali.
         </p>
-
 
         <div class="payment-result-actions">
 
@@ -305,7 +285,6 @@
           >
             Kembali ke Keranjang
           </button>
-
 
           <button
             class="back-cart-button"
@@ -327,7 +306,6 @@
     ====================================================== -->
 
     @else {
-
 
       <!-- =====================================================
            HEADER
@@ -398,17 +376,14 @@
 
           </div>
 
-
           <h2>
             Belum ada produk yang dipilih
           </h2>
-
 
           <p>
             Kembali ke keranjang dan pilih produk
             yang ingin kamu checkout.
           </p>
-
 
           <button
             type="button"
@@ -450,7 +425,6 @@
                   1
                 </div>
 
-
                 <div>
 
                   <h2>
@@ -468,15 +442,11 @@
 
               <div class="checkout-form">
 
-
-                <!-- NAME -->
-
                 <div class="form-group full">
 
                   <label for="receiverName">
                     Nama Penerima
                   </label>
-
 
                   <input
                     id="receiverName"
@@ -490,14 +460,11 @@
                 </div>
 
 
-                <!-- PHONE -->
-
                 <div class="form-group full">
 
                   <label for="phone">
                     Nomor Telepon
                   </label>
-
 
                   <input
                     id="phone"
@@ -511,14 +478,11 @@
                 </div>
 
 
-                <!-- ADDRESS -->
-
                 <div class="form-group full">
 
                   <label for="address">
                     Alamat Lengkap
                   </label>
-
 
                   <textarea
                     id="address"
@@ -532,14 +496,11 @@
                 </div>
 
 
-                <!-- CITY -->
-
                 <div class="form-group">
 
                   <label for="city">
                     Kota / Kabupaten
                   </label>
-
 
                   <input
                     id="city"
@@ -553,14 +514,11 @@
                 </div>
 
 
-                <!-- POSTAL CODE -->
-
                 <div class="form-group">
 
                   <label for="postalCode">
                     Kode Pos
                   </label>
-
 
                   <input
                     id="postalCode"
@@ -590,7 +548,6 @@
                   2
                 </div>
 
-
                 <div>
 
                   <h2>
@@ -616,9 +573,6 @@
 
                   <div class="checkout-product">
 
-
-                    <!-- PRODUCT IMAGE -->
-
                     <a
                       class="product-image"
                       [routerLink]="[
@@ -635,8 +589,6 @@
                     </a>
 
 
-                    <!-- PRODUCT INFO -->
-
                     <div class="product-information">
 
                       <a
@@ -649,7 +601,6 @@
                         {{ item.title }}
                       </a>
 
-
                       @if (item.brand) {
 
                         <span class="product-brand">
@@ -657,7 +608,6 @@
                         </span>
 
                       }
-
 
                       <div class="product-meta">
 
@@ -677,8 +627,6 @@
 
                     </div>
 
-
-                    <!-- PRODUCT TOTAL -->
 
                     <strong class="product-total">
 
@@ -710,22 +658,17 @@
 
             <div class="summary-card">
 
-
               <span class="summary-label">
                 ORDER SUMMARY
               </span>
-
 
               <h2>
                 Ringkasan Pesanan
               </h2>
 
-
               <div class="summary-divider">
               </div>
 
-
-              <!-- PRODUCT COUNT -->
 
               <div class="summary-row">
 
@@ -741,8 +684,6 @@
               </div>
 
 
-              <!-- SUBTOTAL -->
-
               <div class="summary-row">
 
                 <span>
@@ -755,8 +696,6 @@
 
               </div>
 
-
-              <!-- SHIPPING -->
 
               <div class="summary-row">
 
@@ -775,8 +714,6 @@
               </div>
 
 
-              <!-- GRAND TOTAL -->
-
               <div class="summary-total">
 
                 <span>
@@ -789,8 +726,6 @@
 
               </div>
 
-
-              <!-- ERROR -->
 
               @if (formError) {
 
@@ -827,7 +762,6 @@
 
                   </svg>
 
-
                   <span>
                     {{ formError }}
                   </span>
@@ -837,7 +771,7 @@
               }
 
 
-              <!-- PAYMENT BUTTON -->
+              <!-- PAYMENT -->
 
               <button
                 class="payment-button"
@@ -850,9 +784,7 @@
 
                   Memproses Pembayaran...
 
-                }
-
-                @else {
+                } @else {
 
                   Lanjut ke Pembayaran
 
@@ -885,7 +817,7 @@
               </button>
 
 
-              <!-- BACK CART -->
+              <!-- BACK -->
 
               <button
                 class="back-cart-button"
@@ -896,7 +828,17 @@
               </button>
 
 
-              <!-- PAYMENT NOTE -->
+              <!-- CANCEL -->
+
+              <button
+                class="cancel-checkout-button"
+                type="button"
+                (click)="cancelCheckout()"
+                [disabled]="isProcessingPayment"
+              >
+                Batalkan Checkout
+              </button>
+
 
               <div class="payment-note">
 
@@ -925,7 +867,6 @@
                   />
 
                 </svg>
-
 
                 <span>
                   Pembayaran akan diproses

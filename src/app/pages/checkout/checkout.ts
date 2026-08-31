@@ -344,7 +344,6 @@ export class Checkout
                       (id: number) =>
                         !Number.isNaN(id)
                     )
-
                 : [];
 
             this.cartState
@@ -366,7 +365,7 @@ export class Checkout
         }
 
         // ===================================================
-        // SAVE RECEIPT
+        // SAVE PAYMENT RESULT
         // ===================================================
 
         sessionStorage.setItem(
@@ -412,7 +411,7 @@ export class Checkout
       }
 
       // =====================================================
-      // OTHER STATUS
+      // ACTIVE
       // =====================================================
 
       if (
@@ -427,6 +426,10 @@ export class Checkout
 
       }
 
+      // =====================================================
+      // EXPIRED
+      // =====================================================
+
       if (
         data.status ===
         'EXPIRED'
@@ -438,6 +441,10 @@ export class Checkout
         return;
 
       }
+
+      // =====================================================
+      // CANCELED
+      // =====================================================
 
       if (
         data.status ===
@@ -463,9 +470,7 @@ export class Checkout
 
       this.formError =
         error instanceof Error
-
           ? error.message
-
           : 'Terjadi kesalahan saat memverifikasi pembayaran.';
 
     } finally {
@@ -482,6 +487,31 @@ export class Checkout
   // =========================================================
 
   backToCart() {
+
+    this.router.navigate([
+      '/cart'
+    ]);
+
+  }
+
+  // =========================================================
+  // CANCEL CHECKOUT
+  // =========================================================
+
+  cancelCheckout() {
+
+    sessionStorage.removeItem(
+      'checkout-data'
+    );
+
+    sessionStorage.removeItem(
+      'xendit-payment'
+    );
+
+    this.formError = '';
+
+    this.isProcessingPayment =
+      false;
 
     this.router.navigate([
       '/cart'
@@ -719,9 +749,7 @@ export class Checkout
 
       this.formError =
         error instanceof Error
-
           ? error.message
-
           : 'Terjadi kesalahan saat memproses pembayaran.';
 
       this.isProcessingPayment =
